@@ -1,0 +1,70 @@
+# ============================================================
+# PS13 — Containerlab MPLS Network Topology
+# <<NETWORK_TOPOLOGY_CONFIGURATION_REQUIRED>>
+# Requires: containerlab installed on host
+# Usage: sudo containerlab deploy -t topology.yml
+# ============================================================
+
+name: ps13-mpls-lab
+
+topology:
+  nodes:
+    # ── MPLS Provider Edge Routers ──
+    mpls-pe-01:
+      kind: vr-cisco-xrv
+      image: vrnetlab/vr-xrv:7.2.1
+      mgmt-ipv4: 172.20.20.11
+      # <<DEVICE_CONFIGURATION_REQUIRED>>
+      # startup-config: configs/mpls-pe-01.cfg
+
+    mpls-pe-02:
+      kind: vr-cisco-xrv
+      image: vrnetlab/vr-xrv:7.2.1
+      mgmt-ipv4: 172.20.20.12
+
+    # ── Hub Router ──
+    hub-rtr-01:
+      kind: vr-cisco-xrv
+      image: vrnetlab/vr-xrv:7.2.1
+      mgmt-ipv4: 172.20.20.10
+
+    # ── Spoke Routers ──
+    spoke-rtr-a:
+      kind: vr-cisco-xrv
+      image: vrnetlab/vr-xrv:7.2.1
+      mgmt-ipv4: 172.20.20.21
+
+    spoke-rtr-b:
+      kind: vr-cisco-xrv
+      image: vrnetlab/vr-xrv:7.2.1
+      mgmt-ipv4: 172.20.20.22
+
+    spoke-rtr-c:
+      kind: vr-cisco-xrv
+      image: vrnetlab/vr-xrv:7.2.1
+      mgmt-ipv4: 172.20.20.23
+
+    spoke-rtr-d:
+      kind: vr-cisco-xrv
+      image: vrnetlab/vr-xrv:7.2.1
+      mgmt-ipv4: 172.20.20.24
+
+    # ── BGP Peer (simulated ISP) ──
+    bgp-peer-01:
+      kind: vr-cisco-xrv
+      image: vrnetlab/vr-xrv:7.2.1
+      mgmt-ipv4: 172.20.20.30
+
+  links:
+    - endpoints: ["hub-rtr-01:eth1", "mpls-pe-01:eth1"]
+    - endpoints: ["hub-rtr-01:eth2", "mpls-pe-02:eth1"]
+    - endpoints: ["mpls-pe-01:eth2", "mpls-pe-02:eth2"]
+    - endpoints: ["mpls-pe-01:eth3", "bgp-peer-01:eth1"]
+    - endpoints: ["spoke-rtr-a:eth1", "hub-rtr-01:eth3"]
+    - endpoints: ["spoke-rtr-a:eth2", "mpls-pe-01:eth4"]
+    - endpoints: ["spoke-rtr-b:eth1", "hub-rtr-01:eth4"]
+    - endpoints: ["spoke-rtr-b:eth2", "mpls-pe-01:eth5"]
+    - endpoints: ["spoke-rtr-c:eth1", "hub-rtr-01:eth5"]
+    - endpoints: ["spoke-rtr-c:eth2", "mpls-pe-02:eth3"]
+    - endpoints: ["spoke-rtr-d:eth1", "hub-rtr-01:eth6"]
+    - endpoints: ["spoke-rtr-d:eth2", "mpls-pe-02:eth4"]

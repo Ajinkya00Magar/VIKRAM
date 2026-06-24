@@ -1,0 +1,63 @@
+# ============================================================
+# PS13 Backend Requirements
+# ============================================================
+
+# Core Framework
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+pydantic==2.9.2
+pydantic-settings==2.6.0
+python-multipart==0.0.12
+
+# Database
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+alembic==1.14.0
+
+# InfluxDB
+influxdb-client==1.46.0
+influxdb-client[async]==1.46.0
+
+# ML / Predictive Analytics
+numpy==1.26.4
+pandas==2.2.3
+scikit-learn==1.5.2
+xgboost==2.1.2
+prophet==1.1.6
+# LSTM (optional - uncomment for advanced model)
+# torch==2.4.0
+# torch-cuda==2.4.0
+
+# Graph Intelligence
+networkx==3.4.2
+
+# RAG / Embeddings
+chromadb==0.5.20
+sentence-transformers==3.3.1
+
+# HTTP Client (for Ollama)
+httpx==0.28.0
+aiohttp==3.11.8
+
+# WebSocket
+websockets==13.1
+
+# Time series utilities
+statsmodels==0.14.4
+
+# Logging / Monitoring
+structlog==24.4.0
+prometheus-client==0.21.0
+
+# Utilities
+python-dotenv==1.0.1
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+orjson==3.10.11
+ujson==5.10.0
+tenacity==9.0.0
+cachetools==5.5.0
+schedule==1.2.2
+
+# Data
+pyarrow==18.0.0
