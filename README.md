@@ -295,4 +295,4 @@ ps13-copilot/
 
 ---
 
-*PS13 Mission Control — Secure. Local. Autonomous. Predictive.*
+*PS13 Mission Control — Secure. Local. Autonomous. Predictive.*.
