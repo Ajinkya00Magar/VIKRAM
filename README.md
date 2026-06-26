@@ -1,4 +1,4 @@
-# 🛰️ PS13 — Air-Gapped Predictive Copilot & Mission Control Dashboard
+# 🛰️ PS13 — Air-Gapped Predictive Copilot & Mission Control Dashboard.
 
 [![Stack](https://img.shields.io/badge/Stack-Next.js%2015%20%7C%20FastAPI%20%7C%20Docker-blue.svg?style=for-the-badge&logo=nextdotjs)]()
 [![AI Engine](https://img.shields.io/badge/AI%20Engine-Ollama%20%7C%20Mistral%207B-orange.svg?style=for-the-badge&logo=ollama)]()
