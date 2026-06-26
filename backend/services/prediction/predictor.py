@@ -77,6 +77,10 @@ class ProphetForecaster:
     def _get_or_train(self, node_id: str, metric: str, series: pd.DataFrame):
         """Lazily train/retrain Prophet model for a (node, metric) pair."""
         try:
+            import sys
+            import types
+            if "plotly" not in sys.modules:
+                sys.modules["plotly"] = types.ModuleType("plotly")
             from prophet import Prophet
         except ImportError:
             logger.warning("Prophet not installed, using fallback")

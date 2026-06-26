@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { usePS13Store } from "@/store";
 import { getTopology } from "@/lib/api";
@@ -17,45 +18,42 @@ import ScenarioPanel from "@/components/layout/ScenarioPanel";
 import AlertTicker from "@/components/risk/AlertTicker";
 import SystemStats from "@/components/charts/SystemStats";
 
+// Dynamic import keeps Three.js / WebGL fully client-side (no SSR)
+const LandingIntro = dynamic(
+  () => import("@/components/landing/LandingIntro"),
+  { ssr: false }
+);
+
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 5_000, refetchInterval: 10_000 } },
 });
 
+// ── Dashboard ─────────────────────────────────────────────────────────────────
 function MissionControl() {
   const { connected } = useWebSocket();
   const { activePanel, setTopology } = usePS13Store();
 
-  // Initial topology load
   useEffect(() => {
     getTopology()
       .then((topo) => {
-        if (topo?.nodes && topo?.links) {
-          setTopology(topo.nodes, topo.links);
-        }
+        if (topo?.nodes && topo?.links) setTopology(topo.nodes, topo.links);
       })
       .catch(console.error);
   }, [setTopology]);
 
   return (
     <div className="flex flex-col h-screen bg-void overflow-hidden mission-grid scan-lines">
-      {/* ── Top Header Bar ── */}
       <MissionHeader connected={connected} />
-
-      {/* ── Alert Ticker ── */}
       <AlertTicker />
 
-      {/* ── Main Layout ── */}
       <div className="flex flex-1 overflow-hidden">
-        {/* ── Left Sidebar ── */}
         <Sidebar />
 
-        {/* ── Center: Network Canvas (always visible) ── */}
         <main className="flex-1 relative overflow-hidden">
           <NetworkCanvas />
           <RiskOverlay />
         </main>
 
-        {/* ── Right Panel: Context-sensitive ── */}
         <motion.aside
           key={activePanel}
           initial={{ opacity: 0, x: 30 }}
@@ -74,10 +72,43 @@ function MissionControl() {
   );
 }
 
+// ── Root (landing gate + dashboard) ──────────────────────────────────────────
+function AppRoot() {
+  const [showLanding, setShowLanding] = useState(true);
+
+  return (
+    <>
+      {/* Dashboard — always mounted so queries/WS warm up in background */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: showLanding ? 0 : 1 }}
+        transition={{ duration: 1.2, ease: "easeInOut" }}
+        style={{ pointerEvents: showLanding ? "none" : "auto" }}
+      >
+        <MissionControl />
+      </motion.div>
+
+      {/* Landing intro — unmounts after exit animation */}
+      <AnimatePresence>
+        {showLanding && (
+          <motion.div
+            key="landing"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.04 }}
+            transition={{ duration: 1.0, ease: "easeInOut" }}
+          >
+            <LandingIntro onEnter={() => setShowLanding(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
 export default function Home() {
   return (
     <QueryClientProvider client={queryClient}>
-      <MissionControl />
+      <AppRoot />
     </QueryClientProvider>
   );
 }

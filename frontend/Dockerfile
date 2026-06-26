@@ -2,12 +2,15 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json ./
+COPY package.json package-lock.json* ./
 RUN npm install --legacy-peer-deps
 
 COPY . .
 
+# Prevent next/font/google from attempting network calls at build time.
+# This app is air-gapped; fonts load via CSS @import at browser runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_FONT_GOOGLE_MOCKED_RESPONSES=1
 RUN npm run build
 
 FROM node:20-alpine AS runner
