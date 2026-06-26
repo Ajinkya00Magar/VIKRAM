@@ -1,4 +1,3 @@
-version: "3.9"
 
 # ============================================================
 # PS13 — AIR-GAPPED PREDICTIVE COPILOT
@@ -228,6 +227,7 @@ services:
       NEXT_PUBLIC_API_URL: http://localhost:8000
       NEXT_PUBLIC_WS_URL: ws://localhost:8000
       NEXT_PUBLIC_APP_NAME: "PS13 Mission Control"
+      BACKEND_INTERNAL_URL: http://backend:8000
     ports:
       - "3000:3000"
     depends_on:
