@@ -1,22 +1,48 @@
+/* Import display fonts at BROWSER RUNTIME (not build time) - must be before @tailwind directives.
+   Falls back to system fonts gracefully when offline / air-gapped. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── Custom Properties ── */
+/* ── VIKRAM · Charcoal / Deep-Space Design System ─────────────────────── */
+
 :root {
-  --void: #02040a;
-  --plasma: #7c3aed;
-  --neon:   #06b6d4;
-  --ember:  #f97316;
-  --acid:   #84cc16;
-  --risk-healthy:  #22c55e;
-  --risk-low:      #84cc16;
-  --risk-medium:   #eab308;
-  --risk-high:     #f97316;
-  --risk-critical: #ef4444;
+  /* Core palette */
+  --void:   #0a0b0e;
+  --plasma: #8fb4ff;   /* starlight blue — primary accent */
+  --neon:   #a9c7ea;   /* pale ice blue — secondary accent */
+  --ember:  #d98a4a;   /* muted amber — functional alert accent */
+  --acid:   #8a9a7a;   /* cool sage — low-signal accent */
+
+  /* Charcoal / starlight tones (var names preserved for compatibility) */
+  --parchment-cream:  #e6e9f0;   /* primary soft-white text */
+  --parchment-light:  #c7ccd6;
+  --parchment-mid:    #8b93a3;
+  --parchment-dark:   #5a6172;
+  --ink-dark:         #101216;
+  --ink-mid:          #16181d;
+  --leather-border:   rgba(160,178,210,0.16);
+
+  /* Risk — harmonised with the charcoal / starlight theme */
+  --risk-healthy:  #57b6a6;
+  --risk-low:      #7fb0d6;
+  --risk-medium:   #d8b062;
+  --risk-high:     #dd8a4a;
+  --risk-critical: #e26370;
+
+  /* Font family CSS variables — replaces what next/font/google injected.
+     Fonts are loaded at browser runtime via the @import above.
+     These fallbacks ensure var(--font-*) always resolves. */
+  --font-inter:   'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-rune:    'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-serif:   'Space Grotesk', 'Inter', system-ui, sans-serif;
 }
 
-/* ── Base ── */
+/* ── Base Reset ───────────────────────────────────────────────────────── */
 * { box-sizing: border-box; }
 
 html, body {
@@ -25,23 +51,110 @@ html, body {
   background: var(--void);
 }
 
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.4); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(124,58,237,0.7); }
+/* ── Override text-white → cool soft-white ────────────────────────────── */
+/* This re-maps Tailwind's white utilities to cool charcoal-friendly whites so
+   the 139 text-white usages across all components get the new aesthetic
+   without any component file needing to change. */
+@layer utilities {
+  .text-white          { color: #e6e9f0; }
+  .text-white\/90      { color: rgba(230,233,240,0.9); }
+  .text-white\/80      { color: rgba(230,233,240,0.8); }
+  .text-white\/70      { color: rgba(230,233,240,0.7); }
+  .text-white\/60      { color: rgba(230,233,240,0.6); }
+  .text-white\/50      { color: rgba(230,233,240,0.5); }
+  .text-white\/40      { color: rgba(230,233,240,0.42); }
+  .text-white\/30      { color: rgba(230,233,240,0.34); }
+  .text-white\/20      { color: rgba(230,233,240,0.24); }
+  .text-white\/10      { color: rgba(230,233,240,0.12); }
+  .text-white\/5       { color: rgba(230,233,240,0.06); }
 
-/* ── Mission Grid Background ── */
+  .border-white\/10    { border-color: rgba(180,196,224,0.12); }
+  .border-white\/5     { border-color: rgba(180,196,224,0.07); }
+  .border-white\/20    { border-color: rgba(180,196,224,0.22); }
+
+  .bg-white\/5         { background-color: rgba(180,196,224,0.05); }
+  .bg-white\/10        { background-color: rgba(180,196,224,0.10); }
+
+  .divide-white\/5     > * + * { border-color: rgba(180,196,224,0.06); }
+
+  /* w-px h-5 bg-white/10 separator */
+  .bg-white\/10 { background-color: rgba(180,196,224,0.10); }
+}
+
+/* ── Re-map leftover default palette utilities → charcoal theme ────────────
+   Components still use Tailwind's red/green/amber for danger/ok/warning.
+   Rather than touch every file, remap those exact classes to the harmonised
+   theme tones: danger→muted rose, ok→teal, warning→soft amber. */
+@layer utilities {
+  /* danger / critical → muted rose (#e26370) */
+  .text-red-400        { color: #e26370; }
+  .text-red-500        { color: #e26370; }
+  .text-red-400\/70    { color: rgba(226,99,112,0.7); }
+  .text-red-400\/50    { color: rgba(226,99,112,0.5); }
+  .text-red-400\/40    { color: rgba(226,99,112,0.4); }
+
+  .bg-red-400          { background-color: #e26370; }
+  .bg-red-500          { background-color: #e26370; }
+  .bg-red-500\/5       { background-color: rgba(226,99,112,0.05); }
+  .bg-red-500\/10      { background-color: rgba(226,99,112,0.10); }
+  .bg-red-500\/15      { background-color: rgba(226,99,112,0.15); }
+  .bg-red-500\/20      { background-color: rgba(226,99,112,0.20); }
+  .bg-red-500\/30      { background-color: rgba(226,99,112,0.30); }
+  .bg-red-950\/40      { background-color: rgba(70,24,30,0.45); }
+
+  .border-red-500      { border-color: rgba(226,99,112,0.6); }
+  .border-red-500\/20  { border-color: rgba(226,99,112,0.20); }
+  .border-red-500\/25  { border-color: rgba(226,99,112,0.25); }
+  .border-red-500\/30  { border-color: rgba(226,99,112,0.30); }
+
+  /* ok / positive → teal (#57b6a6) */
+  .text-green-400      { color: #57b6a6; }
+  .text-green-500      { color: #57b6a6; }
+  .bg-green-400        { background-color: #57b6a6; }
+  .bg-green-500        { background-color: #57b6a6; }
+
+  /* warning → soft amber (#d8b062) */
+  .text-amber-400      { color: #d8b062; }
+  .text-amber-400\/50  { color: rgba(216,176,98,0.5); }
+  .bg-amber-500\/5     { background-color: rgba(216,176,98,0.05); }
+  .bg-amber-500\/10    { background-color: rgba(216,176,98,0.10); }
+  .border-amber-500\/20{ border-color: rgba(216,176,98,0.20); }
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: rgba(150,170,210,0.04); }
+::-webkit-scrollbar-thumb {
+  background: rgba(143,180,255,0.30);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(143,180,255,0.55); }
+
+/* ── Mission Grid Background (deep-space grid variant) ───────────────── */
 .mission-grid {
   background-color: var(--void);
   background-image:
-    linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(150,170,210,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(150,170,210,0.045) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: -1px -1px;
+  position: relative;
 }
 
-/* ── Scan Line Effect ── */
+/* Subtle cool starlight vignette */
+.mission-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%,   rgba(143,180,255,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse at 0% 100%,  rgba(120,150,220,0.035) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 50%, rgba(143,180,255,0.025) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Scan Lines → Faint CRT / atmospheric lines ──────────────────────── */
 .scan-lines::after {
   content: '';
   position: absolute;
@@ -49,80 +162,103 @@ html, body {
   background: repeating-linear-gradient(
     0deg,
     transparent,
-    transparent 2px,
-    rgba(0,0,0,0.05) 2px,
+    transparent 3px,
+    rgba(0,0,0,0.05) 3px,
     rgba(0,0,0,0.05) 4px
   );
   pointer-events: none;
   z-index: 1;
 }
 
-/* ── Glow Classes ── */
-.glow-plasma  { box-shadow: 0 0 20px rgba(124,58,237,0.5); }
-.glow-neon    { box-shadow: 0 0 20px rgba(6,182,212,0.4); }
-.glow-critical { box-shadow: 0 0 25px rgba(239,68,68,0.7), 0 0 50px rgba(239,68,68,0.3); }
-.glow-high    { box-shadow: 0 0 20px rgba(249,115,22,0.6); }
-.glow-medium  { box-shadow: 0 0 15px rgba(234,179,8,0.5); }
-.glow-healthy { box-shadow: 0 0 12px rgba(34,197,94,0.4); }
+/* ── Glow Classes (starlight-toned) ──────────────────────────────────── */
+.glow-plasma    { box-shadow: 0 0 20px rgba(143,180,255,0.5); }
+.glow-neon      { box-shadow: 0 0 20px rgba(169,199,234,0.4); }
+.glow-critical  { box-shadow: 0 0 25px rgba(229,72,77,0.7), 0 0 50px rgba(229,72,77,0.3); }
+.glow-high      { box-shadow: 0 0 20px rgba(217,122,58,0.6); }
+.glow-medium    { box-shadow: 0 0 15px rgba(200,152,40,0.5); }
+.glow-healthy   { box-shadow: 0 0 12px rgba(74,156,90,0.4); }
 
-.text-glow-plasma  { text-shadow: 0 0 15px rgba(124,58,237,0.8); }
-.text-glow-neon    { text-shadow: 0 0 15px rgba(6,182,212,0.8); }
-.text-glow-critical { text-shadow: 0 0 10px rgba(239,68,68,0.9); }
+.text-glow-plasma   { text-shadow: 0 0 15px rgba(143,180,255,0.8); }
+.text-glow-neon     { text-shadow: 0 0 15px rgba(169,199,234,0.8); }
+.text-glow-critical { text-shadow: 0 0 10px rgba(229,72,77,0.9); }
 
-/* ── Animated Gradient Border ── */
-.gradient-border {
-  position: relative;
-}
+/* ── Animated Gradient Border (golden arcane) ────────────────────────── */
+.gradient-border { position: relative; }
 .gradient-border::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(124,58,237,0.6), rgba(6,182,212,0.4));
+  background: linear-gradient(135deg, rgba(143,180,255,0.7), rgba(169,199,234,0.35));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: destination-out;
   mask-composite: exclude;
   pointer-events: none;
 }
 
-/* ── Panel Glass ── */
+/* ── Panel Glass → Charcoal Glass Panel ─────────────────────────────── */
 .glass-panel {
-  background: rgba(12, 20, 40, 0.85);
+  background: rgba(16, 18, 23, 0.85);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(160, 178, 210, 0.12);
+  /* Subtle inner highlight — cool starlight sheen */
+  box-shadow: inset 0 1px 0 rgba(230,233,240,0.05);
 }
 
 .glass-panel-bright {
-  background: rgba(16, 28, 53, 0.9);
+  background: rgba(24, 27, 34, 0.92);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(124, 58, 237, 0.25);
+  border: 1px solid rgba(143, 180, 255, 0.24);
+  box-shadow: inset 0 1px 0 rgba(230,233,240,0.07);
 }
 
-/* ── Risk Pulse Rings ── */
+/* ── Ornamental Section Divider ──────────────────────────────────────── */
+.arcane-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(143,180,255,0.4) 20%,
+    rgba(230,233,240,0.7) 50%,
+    rgba(143,180,255,0.4) 80%,
+    transparent 100%
+  );
+}
+.arcane-divider::before,
+.arcane-divider::after {
+  content: '◆';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(143,180,255,0.6);
+  font-size: 8px;
+}
+.arcane-divider::before { left: 20%; }
+.arcane-divider::after  { right: 20%; }
+
+/* ── Risk Pulse Rings ────────────────────────────────────────────────── */
 .risk-ring {
   position: absolute;
   border-radius: 50%;
   border: 2px solid currentColor;
   animation: riskRingExpand 2s ease-out infinite;
 }
-
 @keyframes riskRingExpand {
   0%   { transform: scale(1); opacity: 0.8; }
   100% { transform: scale(2.5); opacity: 0; }
 }
 
-/* ── Node Pulse ── */
+/* ── Node Pulse (critical) ───────────────────────────────────────────── */
 .node-pulse-critical {
   animation: nodePulseCritical 0.8s ease-in-out infinite;
 }
-
 @keyframes nodePulseCritical {
-  0%, 100% { box-shadow: 0 0 15px rgba(239,68,68,0.5); }
-  50%       { box-shadow: 0 0 40px rgba(239,68,68,0.9), 0 0 80px rgba(239,68,68,0.4); }
+  0%, 100% { box-shadow: 0 0 15px rgba(212,32,32,0.5); }
+  50%       { box-shadow: 0 0 40px rgba(212,32,32,0.9), 0 0 80px rgba(212,32,32,0.4); }
 }
 
-/* ── Packet Flow Animation (SVG) ── */
+/* ── Packet Flow Animation (SVG) ─────────────────────────────────────── */
 .packet-flow {
   stroke-dasharray: 8 12;
   animation: packetDash 1.5s linear infinite;
@@ -131,34 +267,28 @@ html, body {
   stroke-dasharray: 8 12;
   animation: packetDash 0.8s linear infinite;
 }
+@keyframes packetDash { to { stroke-dashoffset: -20; } }
 
-@keyframes packetDash {
-  to { stroke-dashoffset: -20; }
-}
-
-/* ── Copilot Type Cursor ── */
+/* ── Copilot Type Cursor ─────────────────────────────────────────────── */
 .type-cursor::after {
   content: '▋';
   animation: blink 0.7s step-end infinite;
-  color: var(--neon);
+  color: var(--plasma);
 }
-
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
 }
 
-/* ── Status Indicators ── */
+/* ── Status Indicators ───────────────────────────────────────────────── */
 .status-dot {
-  width: 8px;
-  height: 8px;
+  width: 8px; height: 8px;
   border-radius: 50%;
   position: relative;
 }
 .status-dot.online  { background: var(--risk-healthy); }
 .status-dot.offline { background: var(--risk-critical); }
 .status-dot.warning { background: var(--risk-medium); }
-
 .status-dot.online::after {
   content: '';
   position: absolute;
@@ -168,34 +298,111 @@ html, body {
   animation: riskRingExpand 2s ease-out infinite;
 }
 
-/* ── Metric Bar ── */
+/* ── Metric Bar ──────────────────────────────────────────────────────── */
 .metric-bar {
   height: 3px;
   border-radius: 2px;
   overflow: hidden;
-  background: rgba(255,255,255,0.05);
+  background: rgba(180,196,224,0.08);
 }
 
-/* ── Code / Mono styles ── */
+/* ── Code / Mono ─────────────────────────────────────────────────────── */
 .font-mono { font-family: var(--font-mono), monospace; }
 
-/* ── Radix Tooltip ── */
+/* ── Radix Tooltip ───────────────────────────────────────────────────── */
 .TooltipContent {
-  background: rgba(16,28,53,0.95);
-  border: 1px solid rgba(124,58,237,0.3);
-  color: white;
+  background: rgba(16,18,23,0.96);
+  border: 1px solid rgba(143,180,255,0.3);
+  color: #e6e9f0;
   border-radius: 6px;
   padding: 6px 10px;
   font-size: 12px;
 }
 
-/* ── React Flow dark theme ── */
+/* ── React Flow charcoal theme ───────────────────────────────────────── */
 .react-flow__background { background: transparent !important; }
-.react-flow__controls { background: rgba(12,20,40,0.9) !important; border: 1px solid rgba(99,102,241,0.2) !important; }
-.react-flow__controls-button { background: transparent !important; border: none !important; color: rgba(255,255,255,0.6) !important; }
-.react-flow__controls-button:hover { background: rgba(124,58,237,0.2) !important; color: white !important; }
-.react-flow__minimap { background: rgba(7,13,26,0.9) !important; border: 1px solid rgba(99,102,241,0.2) !important; }
+.react-flow__controls {
+  background: rgba(16,18,23,0.92) !important;
+  border: 1px solid rgba(160,178,210,0.16) !important;
+}
+.react-flow__controls-button {
+  background: transparent !important;
+  border: none !important;
+  color: rgba(230,233,240,0.5) !important;
+}
+.react-flow__controls-button:hover {
+  background: rgba(143,180,255,0.15) !important;
+  color: #e6e9f0 !important;
+}
+.react-flow__minimap {
+  background: rgba(10,11,14,0.92) !important;
+  border: 1px solid rgba(160,178,210,0.16) !important;
+}
 
-/* ── Scrollable containers ── */
-.overflow-y-auto { overflow-y: auto; }
-.overflow-x-hidden { overflow-x: hidden; }
+/* ── Scrollable containers ───────────────────────────────────────────── */
+.overflow-y-auto  { overflow-y: auto; }
+.overflow-x-hidden{ overflow-x: hidden; }
+
+/* ── Landing Page Utilities ──────────────────────────────────────────── */
+.landing-gradient {
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    rgba(143,180,255,0.10) 0%,
+    rgba(90,120,200,0.05) 40%,
+    transparent 70%
+  );
+}
+
+.parchment-badge {
+  border: 1px solid rgba(143,180,255,0.35);
+  background: rgba(143,180,255,0.06);
+  color: #a9c7ea;
+  border-radius: 2px;
+  padding: 3px 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.arcane-btn {
+  position: relative;
+  border: 1px solid rgba(143,180,255,0.45);
+  background: rgba(143,180,255,0.05);
+  color: #e6e9f0;
+  padding: 13px 44px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+.arcane-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(143,180,255,0) 0%, rgba(143,180,255,0.12) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.arcane-btn:hover {
+  border-color: rgba(179,204,255,0.8);
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(143,180,255,0.3), 0 0 48px rgba(143,180,255,0.12);
+}
+.arcane-btn:hover::before { opacity: 1; }
+
+.corner-ornament {
+  position: absolute;
+  width: 18px; height: 18px;
+  border-color: rgba(143,180,255,0.45);
+  border-style: solid;
+}
+.corner-ornament.tl { top:0; left:0;  border-width: 2px 0 0 2px; }
+.corner-ornament.tr { top:0; right:0; border-width: 2px 2px 0 0; }
+.corner-ornament.bl { bottom:0; left:0;  border-width: 0 0 2px 2px; }
+.corner-ornament.br { bottom:0; right:0; border-width: 0 2px 2px 0; }
+

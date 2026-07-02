@@ -20,7 +20,7 @@ export default function RiskOverlay() {
         <motion.div
           className="glass-panel rounded-xl p-3 flex items-center gap-3"
           style={{ borderColor: `${riskColor}40` }}
-          animate={riskLevel === "CRITICAL" ? { borderColor: ["rgba(239,68,68,0.3)", "rgba(239,68,68,0.8)", "rgba(239,68,68,0.3)"] } : {}}
+          animate={riskLevel === "CRITICAL" ? { borderColor: ["rgba(226,99,112,0.3)", "rgba(226,99,112,0.8)", "rgba(226,99,112,0.3)"] } : {}}
           transition={{ duration: 1, repeat: Infinity }}
         >
           {/* Radial gauge */}
@@ -112,7 +112,7 @@ export default function RiskOverlay() {
           >
             <div
               className="glass-panel rounded-xl p-3 flex items-center gap-2"
-              style={{ borderColor: "rgba(249,115,22,0.3)" }}
+              style={{ borderColor: "rgba(221,138,74,0.3)" }}
             >
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}

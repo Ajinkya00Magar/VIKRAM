@@ -1,90 +1,59 @@
 "use client";
 
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertTriangle, Play, RotateCcw, ChevronRight, Loader2, Activity } from "lucide-react";
-import { usePS13Store, getRiskColor } from "@/store";
-import { injectScenario, injectFullScenario, resetScenarios, getScenarioAnalysis } from "@/lib/api";
+import { AlertTriangle, RotateCcw, ChevronRight, X, Layers, Zap } from "lucide-react";
+import { usePS13Store, LEVELS, getRiskColor } from "@/store";
+import { SCENARIO_CATALOG } from "@/lib/scenarios";
+import { buildAdjacency } from "@/lib/demoTopology";
 
-const SCENARIOS = [
-  {
-    id: "HUB_CONGESTION",
-    title: "Hub Congestion",
-    subtitle: "Progressive bandwidth saturation",
-    icon: "📈",
-    color: "#f97316",
-    description: "Bulk backup jobs consume HUB-RTR-01 WAN bandwidth without QoS, triggering cascading latency across all spoke sites.",
-  },
-  {
-    id: "BGP_ROUTE_FLAP",
-    title: "BGP Route Flap",
-    subtitle: "Transit peer session instability",
-    icon: "🔄",
-    color: "#ef4444",
-    description: "ISP transit BGP session experiencing keepalive violations, causing route table churn and internet loss.",
-  },
-  {
-    id: "TUNNEL_DEGRADATION",
-    title: "Tunnel Degradation",
-    subtitle: "IPSec tunnel quality degrading",
-    icon: "🔗",
-    color: "#eab308",
-    description: "WAN packet corruption causing IPSec SA renegotiation loops on SPOKE-RTR-A, degrading VoIP and ERP.",
-  },
-  {
-    id: "MPLS_FAILURE",
-    title: "MPLS Failure",
-    subtitle: "Label-switched path collapse",
-    icon: "💀",
-    color: "#dc2626",
-    description: "MPLS-PE-01 FIB table exhaustion causing LDP session flap, collapsing label-switched paths network-wide.",
-  },
-  {
-    id: "POLICY_DRIFT",
-    title: "Policy Drift",
-    subtitle: "SD-WAN QoS configuration drift",
-    icon: "⚙️",
-    color: "#a855f7",
-    description: "SD-WAN controller firmware upgrade reset QoS templates, demoting VoIP to best-effort class across all tunnels.",
-  },
-];
+// Static "top action" per issue type (client-side, no backend needed).
+const TOP_ACTION: Record<string, string> = {
+  CONGESTION: "Apply QoS shaping on HUB WAN uplink",
+  BGP_FLAP: "Dampen flapping prefixes · fail over to backup peer",
+  TUNNEL_DEGRADATION: "Rekey IPSec SA · reroute over MPLS path",
+  MPLS_FAILURE: "Rebuild LDP sessions · shift to PE-02 label paths",
+  POLICY_DRIFT: "Re-push QoS templates from golden config",
+};
 
 export default function ScenarioPanel() {
-  const { scenario, setScenario, resetScenario } = usePS13Store();
-  const [loading, setLoading] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState<any>(null);
-  const [expandedScenario, setExpandedScenario] = useState<string | null>(null);
+  const {
+    activeScenarios, injectScenario, escalateScenario,
+    clearScenario, clearAllScenarios, links,
+  } = usePS13Store();
 
-  async function handleInject(id: string, full = false) {
-    setLoading(id);
-    try {
-      if (full) {
-        await injectFullScenario(id);
-      } else {
-        const step = scenario.active === id ? (scenario.step ?? 0) + 1 : 0;
-        await injectScenario(id, Math.min(step, 4));
-      }
-      // Fetch full analysis
-      const result = await getScenarioAnalysis(id);
-      setAnalysis(result);
-      setExpandedScenario(id);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(null);
+  const adjacency = buildAdjacency(links);
+  const activeMap = new Map(activeScenarios.map((s) => [s.type, s]));
+
+  function handleInject(id: string) {
+    const def = SCENARIO_CATALOG.find((s) => s.id === id);
+    if (!def) return;
+    const existing = activeMap.get(id);
+    if (existing) {
+      escalateScenario(id); // active → escalate one step
+      return;
     }
+    injectScenario({
+      type: def.id,
+      trigger_node: def.trigger_node,
+      issue_type: def.issue_type,
+      step: 1,
+      severity: LEVELS[1],
+      started_at: Date.now(),
+    });
   }
 
-  async function handleReset() {
-    setLoading("reset");
-    try {
-      await resetScenarios();
-      resetScenario();
-      setAnalysis(null);
-      setExpandedScenario(null);
-    } finally {
-      setLoading(null);
-    }
+  function handleFull(id: string) {
+    const def = SCENARIO_CATALOG.find((s) => s.id === id);
+    if (!def) return;
+    clearScenario(id);
+    injectScenario({
+      type: def.id,
+      trigger_node: def.trigger_node,
+      issue_type: def.issue_type,
+      step: 4,
+      severity: LEVELS[4],
+      started_at: Date.now(),
+    });
   }
 
   return (
@@ -97,76 +66,57 @@ export default function ScenarioPanel() {
               <AlertTriangle size={14} className="text-red-400" />
             </div>
             <div>
-              <div className="text-sm font-display font-bold text-white">Demo Scenarios</div>
-              <div className="text-[10px] text-white/30 font-mono">5 fault injection scenarios</div>
+              <div className="text-sm font-display font-bold text-white">Intrusions</div>
+              <div className="text-[10px] text-white/30 font-mono">
+                run several at once
+              </div>
             </div>
           </div>
           <motion.button
-            onClick={handleReset}
-            disabled={loading === "reset"}
+            onClick={clearAllScenarios}
+            disabled={activeScenarios.length === 0}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-1 text-[10px] font-mono text-white/30 hover:text-white/60 transition-colors px-2 py-1 rounded border border-white/10 hover:border-white/20"
+            className="flex items-center gap-1 text-[10px] font-mono text-white/30 hover:text-white/60 transition-colors px-2 py-1 rounded border border-white/10 hover:border-white/20 disabled:opacity-40"
           >
-            {loading === "reset"
-              ? <Loader2 size={10} className="animate-spin" />
-              : <RotateCcw size={10} />
-            }
-            Reset
+            <RotateCcw size={10} />
+            Reset all
           </motion.button>
         </div>
 
-        {/* Active scenario indicator */}
-        {scenario.active && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            className="mt-3 rounded-lg p-2.5"
-            style={{ background: "rgba(249,115,22,0.08)", border: "1px solid rgba(249,115,22,0.25)" }}
-          >
-            <div className="flex items-center gap-2">
-              <Activity size={10} className="text-ember animate-pulse" />
-              <span className="text-[10px] font-mono text-ember">
-                ACTIVE: {scenario.active?.replace(/_/g, " ")} — {scenario.severity}
-              </span>
-            </div>
-            <div className="mt-1.5 flex gap-1">
-              {[0, 1, 2, 3, 4].map((s) => (
-                <div
-                  key={s}
-                  className="flex-1 h-1 rounded-full transition-all"
-                  style={{
-                    background: s <= (scenario.step ?? 0)
-                      ? "#f97316"
-                      : "rgba(255,255,255,0.1)",
-                  }}
-                />
-              ))}
-            </div>
-            <div className="text-[9px] font-mono text-white/30 mt-1">
-              Severity step {(scenario.step ?? 0) + 1}/5
-            </div>
-          </motion.div>
-        )}
+        {/* Aggregate indicator */}
+        <div className="mt-3 flex items-center gap-2 rounded-lg p-2.5"
+          style={{
+            background: activeScenarios.length ? "rgba(221,138,74,0.08)" : "rgba(180,196,224,0.04)",
+            border: `1px solid ${activeScenarios.length ? "rgba(221,138,74,0.25)" : "rgba(180,196,224,0.08)"}`,
+          }}
+        >
+          <Layers size={12} className={activeScenarios.length ? "text-ember" : "text-white/30"} />
+          <span className="text-[10px] font-mono text-white/60">
+            {activeScenarios.length === 0
+              ? "No active intrusions"
+              : `${activeScenarios.length} intrusion${activeScenarios.length > 1 ? "s" : ""} active`}
+          </span>
+        </div>
       </div>
 
       {/* Scenario list */}
       <div className="flex-1 overflow-y-auto p-3">
         <div className="space-y-2">
-          {SCENARIOS.map((sc) => {
-            const isActive = scenario.active === sc.id;
-            const isExpanded = expandedScenario === sc.id;
-            const isLoading = loading === sc.id;
+          {SCENARIO_CATALOG.map((sc) => {
+            const active = activeMap.get(sc.id);
+            const isActive = !!active;
+            const neighbours = adjacency[sc.trigger_node] ?? [];
 
             return (
               <motion.div
                 key={sc.id}
+                layout
                 className="rounded-xl overflow-hidden border transition-all"
                 style={{
-                  borderColor: isActive ? `${sc.color}40` : "rgba(255,255,255,0.06)",
-                  background: isActive ? `${sc.color}06` : "rgba(255,255,255,0.02)",
+                  borderColor: isActive ? `${sc.color}45` : "rgba(255,255,255,0.06)",
+                  background: isActive ? `${sc.color}0c` : "rgba(255,255,255,0.02)",
                 }}
               >
-                {/* Scenario header */}
                 <div className="p-3">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex items-center gap-2">
@@ -177,117 +127,82 @@ export default function ScenarioPanel() {
                       </div>
                     </div>
                     {isActive && (
-                      <div
-                        className="text-[9px] font-mono px-1.5 py-0.5 rounded-sm flex-shrink-0"
-                        style={{ color: sc.color, background: `${sc.color}15`, border: `1px solid ${sc.color}30` }}
+                      <button
+                        onClick={() => clearScenario(sc.id)}
+                        title="Clear this intrusion"
+                        className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-colors"
                       >
-                        ACTIVE
-                      </div>
+                        <X size={12} />
+                      </button>
                     )}
                   </div>
 
-                  <p className="text-[10px] text-white/40 font-mono mb-3 leading-relaxed">
+                  <p className="text-[10px] text-white/40 font-mono mb-2 leading-relaxed">
                     {sc.description}
                   </p>
 
-                  {/* Action buttons */}
+                  <div className="flex items-center gap-2 mb-3 text-[9px] font-mono text-white/35">
+                    <span>trigger: <span className="text-white/60">{sc.trigger_node}</span></span>
+                    <span>·</span>
+                    <span>{neighbours.length} adjacent</span>
+                  </div>
+
+                  {/* Severity progress (only when active) */}
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mb-3"
+                      >
+                        <div className="flex gap-1 mb-1">
+                          {[0, 1, 2, 3, 4].map((s) => (
+                            <div
+                              key={s}
+                              className="flex-1 h-1 rounded-full transition-all"
+                              style={{ background: s <= active!.step ? sc.color : "rgba(255,255,255,0.1)" }}
+                            />
+                          ))}
+                        </div>
+                        <div className="flex items-center justify-between text-[9px] font-mono">
+                          <span style={{ color: getRiskColor(active!.severity) }}>
+                            {active!.severity} · step {active!.step + 1}/5
+                          </span>
+                          <span className="text-white/40 flex items-center gap-1">
+                            <Zap size={8} /> {TOP_ACTION[sc.issue_type]}
+                          </span>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Actions */}
                   <div className="flex gap-1.5">
                     <motion.button
                       onClick={() => handleInject(sc.id)}
-                      disabled={!!loading}
                       whileTap={{ scale: 0.95 }}
                       className="flex-1 py-1.5 rounded-md text-[10px] font-mono transition-all flex items-center justify-center gap-1"
-                      style={{
-                        background: `${sc.color}12`,
-                        border: `1px solid ${sc.color}30`,
-                        color: sc.color,
-                      }}
+                      style={{ background: `${sc.color}14`, border: `1px solid ${sc.color}30`, color: sc.color }}
                     >
-                      {isLoading
-                        ? <Loader2 size={9} className="animate-spin" />
-                        : <ChevronRight size={9} />
-                      }
-                      {isActive ? "Next Step" : "Inject"}
+                      <ChevronRight size={9} />
+                      {isActive ? "Escalate" : "Inject"}
                     </motion.button>
                     <motion.button
-                      onClick={() => handleInject(sc.id, true)}
-                      disabled={!!loading}
+                      onClick={() => handleFull(sc.id)}
                       whileTap={{ scale: 0.95 }}
                       className="py-1.5 px-2.5 rounded-md text-[10px] font-mono transition-all"
-                      style={{
-                        background: "rgba(239,68,68,0.1)",
-                        border: "1px solid rgba(239,68,68,0.25)",
-                        color: "#f87171",
-                      }}
+                      style={{ background: "rgba(226,99,112,0.1)", border: "1px solid rgba(226,99,112,0.25)", color: "#e26370" }}
                     >
                       Full
                     </motion.button>
                   </div>
                 </div>
-
-                {/* Expanded analysis */}
-                <AnimatePresence>
-                  {isExpanded && analysis && analysis.scenario_type === sc.id && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="border-t"
-                      style={{ borderColor: `${sc.color}20` }}
-                    >
-                      <div className="p-3 space-y-2">
-                        {/* Prediction */}
-                        {analysis.prediction && (
-                          <AnalysisRow
-                            label="Prediction"
-                            value={`${analysis.prediction.issue_type.replace(/_/g," ")} — ${(analysis.prediction.confidence_score * 100).toFixed(0)}% confidence`}
-                            sub={`Impact in ${analysis.prediction.time_to_impact_minutes.toFixed(0)} min`}
-                            color={sc.color}
-                          />
-                        )}
-                        {/* Root cause */}
-                        <AnalysisRow
-                          label="Root Cause"
-                          value={analysis.root_cause}
-                          color={sc.color}
-                        />
-                        {/* Blast radius */}
-                        {analysis.blast_radius && (
-                          <AnalysisRow
-                            label="Blast Radius"
-                            value={`${analysis.blast_radius.affected_nodes.length} nodes · ${analysis.blast_radius.affected_sites.length} sites · ${analysis.blast_radius.estimated_users_impacted} users`}
-                            sub={`Impact score: ${analysis.blast_radius.impact_score.toFixed(0)}/100`}
-                            color={sc.color}
-                          />
-                        )}
-                        {/* Top action */}
-                        {analysis.action_plan?.ranked_actions?.[0] && (
-                          <AnalysisRow
-                            label="Top Action"
-                            value={analysis.action_plan.ranked_actions[0].action_type.replace(/_/g," ")}
-                            sub={`${analysis.action_plan.ranked_actions[0].risk_reduction_pct.toFixed(0)}% risk reduction · ${analysis.action_plan.ranked_actions[0].estimated_recovery_minutes}min`}
-                            color="#84cc16"
-                          />
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </motion.div>
             );
           })}
         </div>
       </div>
-    </div>
-  );
-}
-
-function AnalysisRow({ label, value, sub, color }: { label: string; value: string; sub?: string; color: string }) {
-  return (
-    <div className="rounded-md p-2" style={{ background: `${color}08`, border: `1px solid ${color}15` }}>
-      <div className="text-[9px] font-mono text-white/30 uppercase tracking-widest mb-0.5">{label}</div>
-      <div className="text-[10px] font-mono text-white/80">{value}</div>
-      {sub && <div className="text-[9px] font-mono text-white/30 mt-0.5">{sub}</div>}
     </div>
   );
 }

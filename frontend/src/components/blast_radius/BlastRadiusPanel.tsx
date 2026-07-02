@@ -35,7 +35,7 @@ export default function BlastRadiusPanel() {
         blastRadius.impact_score >= 50 ? "HIGH" :
         blastRadius.impact_score >= 30 ? "MEDIUM" : "LOW"
       )
-    : "#6b7280";
+    : "#8b93a3";
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -76,8 +76,8 @@ export default function BlastRadiusPanel() {
           whileTap={{ scale: 0.97 }}
           className="w-full py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center justify-center gap-2"
           style={{
-            background: "rgba(249,115,22,0.15)",
-            border: "1px solid rgba(249,115,22,0.4)",
+            background: "rgba(221,138,74,0.15)",
+            border: "1px solid rgba(221,138,74,0.4)",
             color: "#fb923c",
           }}
         >
@@ -163,7 +163,7 @@ export default function BlastRadiusPanel() {
                   icon={<Server size={14} className="text-neon" />}
                   label="Nodes Affected"
                   value={blastRadius.affected_nodes.length}
-                  color="#06b6d4"
+                  color="#8fb4ff"
                 />
                 <StatCard
                   icon={<Globe size={14} className="text-plasma" />}
@@ -181,7 +181,7 @@ export default function BlastRadiusPanel() {
                   icon={<AlertTriangle size={14} className="text-ember" />}
                   label="Depth"
                   value={`${blastRadius.propagation_depth} hops`}
-                  color="#f97316"
+                  color="#dd8a4a"
                 />
               </div>
 

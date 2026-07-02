@@ -82,8 +82,8 @@ export default function SimulationPanel() {
           whileTap={{ scale: 0.97 }}
           className="w-full py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center justify-center gap-2"
           style={{
-            background: "rgba(132,204,22,0.1)",
-            border: "1px solid rgba(132,204,22,0.35)",
+            background: "rgba(87,182,166,0.1)",
+            border: "1px solid rgba(87,182,166,0.35)",
             color: "#a3e635",
           }}
         >
@@ -106,7 +106,7 @@ export default function SimulationPanel() {
               {/* Recommended Action */}
               <div
                 className="rounded-xl p-3 mb-4"
-                style={{ background: "rgba(132,204,22,0.08)", border: "1px solid rgba(132,204,22,0.25)" }}
+                style={{ background: "rgba(87,182,166,0.08)", border: "1px solid rgba(87,182,166,0.25)" }}
               >
                 <div className="flex items-center gap-2 mb-1">
                   <CheckCircle size={12} className="text-acid" />
@@ -143,15 +143,15 @@ export default function SimulationPanel() {
                         borderRadius: 6, fontSize: 10, fontFamily: "monospace",
                       }}
                     />
-                    <ReferenceLine y={80} stroke="rgba(239,68,68,0.4)" strokeDasharray="4 4"
-                      label={{ value: "SLA BREACH", fill: "rgba(239,68,68,0.5)", fontSize: 8 }} />
+                    <ReferenceLine y={80} stroke="rgba(226,99,112,0.4)" strokeDasharray="4 4"
+                      label={{ value: "SLA BREACH", fill: "rgba(226,99,112,0.5)", fontSize: 8 }} />
                     <Line
                       type="monotone" dataKey="doNothing" name="Do Nothing"
-                      stroke="#ef4444" strokeWidth={2} dot={false} strokeDasharray="5 3"
+                      stroke="#e26370" strokeWidth={2} dot={false} strokeDasharray="5 3"
                     />
                     <Line
                       type="monotone" dataKey="bestAction" name="Best Action"
-                      stroke="#84cc16" strokeWidth={2} dot={false}
+                      stroke="#57b6a6" strokeWidth={2} dot={false}
                     />
                     <Legend wrapperStyle={{ fontSize: 9, fontFamily: "monospace" }} />
                   </LineChart>
@@ -169,8 +169,8 @@ export default function SimulationPanel() {
                     const isRecommended =
                       outcome.action.action_type === result.recommended_action.action_type;
                     const reductionColor =
-                      outcome.risk_reduction_pct > 70 ? "#84cc16" :
-                      outcome.risk_reduction_pct > 40 ? "#eab308" : "#f97316";
+                      outcome.risk_reduction_pct > 70 ? "#57b6a6" :
+                      outcome.risk_reduction_pct > 40 ? "#d8b062" : "#dd8a4a";
 
                     return (
                       <motion.div
@@ -179,7 +179,7 @@ export default function SimulationPanel() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.06 }}
                         className={`rounded-lg p-2.5 ${isRecommended ? "border border-acid/30" : "border border-white/5"}`}
-                        style={isRecommended ? { background: "rgba(132,204,22,0.06)" } : { background: "rgba(255,255,255,0.02)" }}
+                        style={isRecommended ? { background: "rgba(87,182,166,0.06)" } : { background: "rgba(255,255,255,0.02)" }}
                       >
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-[10px] font-mono text-white/70">
@@ -194,7 +194,7 @@ export default function SimulationPanel() {
                         </div>
                         <div className="flex items-center gap-3 text-[9px] font-mono text-white/30">
                           <span><Clock size={7} className="inline mr-0.5" />{outcome.estimated_recovery_minutes}min</span>
-                          <span style={{ color: outcome.confidence > 0.8 ? "#84cc16" : "#eab308" }}>
+                          <span style={{ color: outcome.confidence > 0.8 ? "#57b6a6" : "#d8b062" }}>
                             {(outcome.confidence * 100).toFixed(0)}% conf
                           </span>
                           {outcome.side_effects?.length > 0 && (
