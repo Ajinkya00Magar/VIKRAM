@@ -31,7 +31,7 @@ logger = structlog.get_logger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup and shutdown lifecycle."""
-    logger.info("PS13 Mission Control starting up...")
+    logger.info("VIKRAM starting up...")
 
     # 1. Initialize database
     try:
@@ -84,7 +84,7 @@ async def lifespan(app: FastAPI):
     orch_task = asyncio.create_task(orchestrator.start())
     logger.info("✅ Orchestrator started")
 
-    logger.info("🚀 PS13 Mission Control is LIVE", port=settings.backend_port)
+    logger.info("🚀 VIKRAM is LIVE", port=settings.backend_port)
 
     yield
 
@@ -190,7 +190,7 @@ async def health():
     twin = get_twin()
     return {
         "status": "operational",
-        "system": "PS13 Mission Control",
+        "system": "VIKRAM",
         "air_gapped": True,
         "nodes": twin.graph.number_of_nodes(),
         "links": twin.graph.number_of_edges() // 2,

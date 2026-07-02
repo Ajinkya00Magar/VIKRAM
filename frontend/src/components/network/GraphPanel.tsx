@@ -88,7 +88,7 @@ export default function GraphPanel() {
                   Betweenness Centrality — Critical Transit Nodes
                 </div>
                 {centrality.slice(0, 10).map((node, i) => {
-                  const color = node.risk_score > 60 ? "#ef4444" : node.is_critical ? "#06b6d4" : "#6b7280";
+                  const color = node.risk_score > 60 ? "#e26370" : node.is_critical ? "#8fb4ff" : "#8b93a3";
                   const barWidth = Math.round(node.betweenness_centrality * 100 * 3);
                   return (
                     <motion.div
@@ -133,12 +133,12 @@ export default function GraphPanel() {
                 <div
                   className="rounded-xl p-3 text-center"
                   style={{
-                    background: redundancy.redundancy_score > 60 ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)",
-                    border: `1px solid ${redundancy.redundancy_score > 60 ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`,
+                    background: redundancy.redundancy_score > 60 ? "rgba(87,182,166,0.08)" : "rgba(226,99,112,0.08)",
+                    border: `1px solid ${redundancy.redundancy_score > 60 ? "rgba(87,182,166,0.25)" : "rgba(226,99,112,0.25)"}`,
                   }}
                 >
                   <div className="text-2xl font-display font-bold mb-1"
-                    style={{ color: redundancy.redundancy_score > 60 ? "#22c55e" : "#ef4444" }}>
+                    style={{ color: redundancy.redundancy_score > 60 ? "#57b6a6" : "#e26370" }}>
                     {redundancy.redundancy_score}
                   </div>
                   <div className="text-[10px] font-mono text-white/40">Redundancy Score / 100</div>
@@ -182,14 +182,14 @@ export default function GraphPanel() {
                 <div
                   className="rounded-xl p-3 flex items-center gap-3"
                   style={{
-                    background: mplsData.overall_mpls_health === "HEALTHY" ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)",
-                    border: `1px solid ${mplsData.overall_mpls_health === "HEALTHY" ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
+                    background: mplsData.overall_mpls_health === "HEALTHY" ? "rgba(87,182,166,0.08)" : "rgba(226,99,112,0.08)",
+                    border: `1px solid ${mplsData.overall_mpls_health === "HEALTHY" ? "rgba(87,182,166,0.3)" : "rgba(226,99,112,0.3)"}`,
                   }}
                 >
                   <Wifi size={20} className={mplsData.overall_mpls_health === "HEALTHY" ? "text-green-400" : "text-red-400"} />
                   <div>
                     <div className="text-sm font-display font-bold"
-                      style={{ color: mplsData.overall_mpls_health === "HEALTHY" ? "#22c55e" : "#ef4444" }}>
+                      style={{ color: mplsData.overall_mpls_health === "HEALTHY" ? "#57b6a6" : "#e26370" }}>
                       MPLS {mplsData.overall_mpls_health}
                     </div>
                     <div className="text-[10px] font-mono text-white/30">
@@ -204,7 +204,7 @@ export default function GraphPanel() {
                 </div>
                 {(mplsData.lsps ?? []).map((lsp: any, i: number) => {
                   const util = lsp.utilization ?? 0;
-                  const color = util > 75 ? "#ef4444" : util > 50 ? "#f97316" : "#06b6d4";
+                  const color = util > 75 ? "#e26370" : util > 50 ? "#dd8a4a" : "#8fb4ff";
                   return (
                     <motion.div
                       key={lsp.link_id ?? i}

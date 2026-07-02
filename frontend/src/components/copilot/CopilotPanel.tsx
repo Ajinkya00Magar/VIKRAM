@@ -183,7 +183,7 @@ export default function CopilotPanel() {
                       .replace(/\*\*(.*?)\*\*/g, '<strong style="color: rgba(255,255,255,0.95)">$1</strong>')
                       .replace(/`([^`]+)`/g, '<code style="background:rgba(124,58,237,0.2);padding:1px 4px;border-radius:3px;color:#a78bfa">$1</code>')
                       .replace(/^(\d+\.) (.+)$/gm, '<div style="display:flex;gap:6px;margin:2px 0"><span style="color:rgba(124,58,237,0.7)">$1</span><span>$2</span></div>')
-                      .replace(/^- (.+)$/gm, '<div style="display:flex;gap:6px;margin:1px 0"><span style="color:#06b6d4">•</span><span>$1</span></div>')
+                      .replace(/^- (.+)$/gm, '<div style="display:flex;gap:6px;margin:1px 0"><span style="color:#8fb4ff">•</span><span>$1</span></div>')
                       .replace(/🔴|⚠️|📊|📈|🤖/g, (m) => `<span style="font-size:12px">${m}</span>`),
                   }}
                 />
@@ -194,7 +194,7 @@ export default function CopilotPanel() {
                       <span
                         key={rb}
                         className="text-[9px] font-mono px-1.5 py-0.5 rounded-sm"
-                        style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.2)", color: "#22d3ee" }}
+                        style={{ background: "rgba(143,180,255,0.1)", border: "1px solid rgba(143,180,255,0.2)", color: "#a9c7ea" }}
                       >
                         <BookOpen size={7} className="inline mr-1" />
                         {rb}

@@ -226,7 +226,7 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8000
       NEXT_PUBLIC_WS_URL: ws://localhost:8000
-      NEXT_PUBLIC_APP_NAME: "PS13 Mission Control"
+      NEXT_PUBLIC_APP_NAME: "VIKRAM"
       BACKEND_INTERNAL_URL: http://backend:8000
     ports:
       - "3000:3000"

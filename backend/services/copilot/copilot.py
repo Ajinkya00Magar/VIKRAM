@@ -22,10 +22,10 @@ OLLAMA_FALLBACK = os.environ.get("OLLAMA_FALLBACK_MODEL", "phi3:mini")
 OLLAMA_TIMEOUT = int(os.environ.get("OLLAMA_TIMEOUT", "120"))
 
 # ──────────────────────────────────────────────────────
-# SYSTEM PROMPT: NOC Mission Control Copilot
+# SYSTEM PROMPT: VIKRAM Copilot
 # ──────────────────────────────────────────────────────
 
-SYSTEM_PROMPT = """You are ARIA (Autonomous Risk Intelligence Assistant), the AI copilot for PS13 Mission Control — an air-gapped predictive NOC for enterprise MPLS/SD-WAN networks.
+SYSTEM_PROMPT = """You are ARIA (Autonomous Risk Intelligence Assistant), the AI copilot for VIKRAM — an air-gapped predictive NOC for enterprise MPLS/SD-WAN networks.
 
 Your role:
 - Explain WHY network risk is elevated in clear, technical language

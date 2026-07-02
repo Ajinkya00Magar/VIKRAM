@@ -1,45 +1,45 @@
 /* Import display fonts at BROWSER RUNTIME (not build time) - must be before @tailwind directives.
    Falls back to system fonts gracefully when offline / air-gapped. */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700;900&family=UnifrakturMaguntia&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── Arcane / Dark Parchment Design System ────────────────────────────── */
+/* ── VIKRAM · Charcoal / Deep-Space Design System ─────────────────────── */
 
 :root {
   /* Core palette */
-  --void:   #080502;
-  --plasma: #c9a55a;
-  --neon:   #d49060;
-  --ember:  #c84020;
-  --acid:   #7a8c3a;
+  --void:   #0a0b0e;
+  --plasma: #8fb4ff;   /* starlight blue — primary accent */
+  --neon:   #a9c7ea;   /* pale ice blue — secondary accent */
+  --ember:  #d98a4a;   /* muted amber — functional alert accent */
+  --acid:   #8a9a7a;   /* cool sage — low-signal accent */
 
-  /* Parchment tones */
-  --parchment-cream:  #e8d5a3;
-  --parchment-light:  #d4bb88;
-  --parchment-mid:    #b89660;
-  --parchment-dark:   #8b6c3a;
-  --ink-dark:         #1a0e06;
-  --ink-mid:          #2c1a0a;
-  --leather-border:   rgba(180,130,50,0.22);
+  /* Charcoal / starlight tones (var names preserved for compatibility) */
+  --parchment-cream:  #e6e9f0;   /* primary soft-white text */
+  --parchment-light:  #c7ccd6;
+  --parchment-mid:    #8b93a3;
+  --parchment-dark:   #5a6172;
+  --ink-dark:         #101216;
+  --ink-mid:          #16181d;
+  --leather-border:   rgba(160,178,210,0.16);
 
-  /* Risk */
-  --risk-healthy:  #4a9c5a;
-  --risk-low:      #7a8c3a;
-  --risk-medium:   #c89828;
-  --risk-high:     #c84020;
-  --risk-critical: #d42020;
+  /* Risk — harmonised with the charcoal / starlight theme */
+  --risk-healthy:  #57b6a6;
+  --risk-low:      #7fb0d6;
+  --risk-medium:   #d8b062;
+  --risk-high:     #dd8a4a;
+  --risk-critical: #e26370;
 
   /* Font family CSS variables — replaces what next/font/google injected.
      Fonts are loaded at browser runtime via the @import above.
      These fallbacks ensure var(--font-*) always resolves. */
   --font-inter:   'Inter', system-ui, -apple-system, sans-serif;
   --font-mono:    'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
-  --font-display: 'Cinzel', 'Palatino Linotype', Georgia, serif;
-  --font-rune:    'Cinzel Decorative', 'Palatino Linotype', Georgia, serif;
-  --font-serif:   'Lora', 'Palatino Linotype', Georgia, serif;
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-rune:    'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-serif:   'Space Grotesk', 'Inter', system-ui, sans-serif;
 }
 
 /* ── Base Reset ───────────────────────────────────────────────────────── */
@@ -51,70 +51,110 @@ html, body {
   background: var(--void);
 }
 
-/* ── Override text-white → parchment cream ────────────────────────────── */
-/* This re-maps Tailwind's white utilities to warm parchment tones so the
-   139 text-white usages across all components get the new aesthetic
+/* ── Override text-white → cool soft-white ────────────────────────────── */
+/* This re-maps Tailwind's white utilities to cool charcoal-friendly whites so
+   the 139 text-white usages across all components get the new aesthetic
    without any component file needing to change. */
 @layer utilities {
-  .text-white          { color: #e8d5a3; }
-  .text-white\/90      { color: rgba(232,213,163,0.9); }
-  .text-white\/80      { color: rgba(232,213,163,0.8); }
-  .text-white\/70      { color: rgba(232,213,163,0.7); }
-  .text-white\/60      { color: rgba(232,213,163,0.6); }
-  .text-white\/50      { color: rgba(232,213,163,0.5); }
-  .text-white\/40      { color: rgba(232,213,163,0.4); }
-  .text-white\/30      { color: rgba(232,213,163,0.3); }
-  .text-white\/20      { color: rgba(232,213,163,0.2); }
-  .text-white\/10      { color: rgba(232,213,163,0.1); }
-  .text-white\/5       { color: rgba(232,213,163,0.05); }
+  .text-white          { color: #e6e9f0; }
+  .text-white\/90      { color: rgba(230,233,240,0.9); }
+  .text-white\/80      { color: rgba(230,233,240,0.8); }
+  .text-white\/70      { color: rgba(230,233,240,0.7); }
+  .text-white\/60      { color: rgba(230,233,240,0.6); }
+  .text-white\/50      { color: rgba(230,233,240,0.5); }
+  .text-white\/40      { color: rgba(230,233,240,0.42); }
+  .text-white\/30      { color: rgba(230,233,240,0.34); }
+  .text-white\/20      { color: rgba(230,233,240,0.24); }
+  .text-white\/10      { color: rgba(230,233,240,0.12); }
+  .text-white\/5       { color: rgba(230,233,240,0.06); }
 
-  .border-white\/10    { border-color: rgba(232,213,163,0.10); }
-  .border-white\/5     { border-color: rgba(232,213,163,0.05); }
-  .border-white\/20    { border-color: rgba(232,213,163,0.20); }
+  .border-white\/10    { border-color: rgba(180,196,224,0.12); }
+  .border-white\/5     { border-color: rgba(180,196,224,0.07); }
+  .border-white\/20    { border-color: rgba(180,196,224,0.22); }
 
-  .bg-white\/5         { background-color: rgba(232,213,163,0.05); }
-  .bg-white\/10        { background-color: rgba(232,213,163,0.10); }
+  .bg-white\/5         { background-color: rgba(180,196,224,0.05); }
+  .bg-white\/10        { background-color: rgba(180,196,224,0.10); }
 
-  .divide-white\/5     > * + * { border-color: rgba(232,213,163,0.05); }
+  .divide-white\/5     > * + * { border-color: rgba(180,196,224,0.06); }
 
   /* w-px h-5 bg-white/10 separator */
-  .bg-white\/10 { background-color: rgba(232,213,163,0.10); }
+  .bg-white\/10 { background-color: rgba(180,196,224,0.10); }
+}
+
+/* ── Re-map leftover default palette utilities → charcoal theme ────────────
+   Components still use Tailwind's red/green/amber for danger/ok/warning.
+   Rather than touch every file, remap those exact classes to the harmonised
+   theme tones: danger→muted rose, ok→teal, warning→soft amber. */
+@layer utilities {
+  /* danger / critical → muted rose (#e26370) */
+  .text-red-400        { color: #e26370; }
+  .text-red-500        { color: #e26370; }
+  .text-red-400\/70    { color: rgba(226,99,112,0.7); }
+  .text-red-400\/50    { color: rgba(226,99,112,0.5); }
+  .text-red-400\/40    { color: rgba(226,99,112,0.4); }
+
+  .bg-red-400          { background-color: #e26370; }
+  .bg-red-500          { background-color: #e26370; }
+  .bg-red-500\/5       { background-color: rgba(226,99,112,0.05); }
+  .bg-red-500\/10      { background-color: rgba(226,99,112,0.10); }
+  .bg-red-500\/15      { background-color: rgba(226,99,112,0.15); }
+  .bg-red-500\/20      { background-color: rgba(226,99,112,0.20); }
+  .bg-red-500\/30      { background-color: rgba(226,99,112,0.30); }
+  .bg-red-950\/40      { background-color: rgba(70,24,30,0.45); }
+
+  .border-red-500      { border-color: rgba(226,99,112,0.6); }
+  .border-red-500\/20  { border-color: rgba(226,99,112,0.20); }
+  .border-red-500\/25  { border-color: rgba(226,99,112,0.25); }
+  .border-red-500\/30  { border-color: rgba(226,99,112,0.30); }
+
+  /* ok / positive → teal (#57b6a6) */
+  .text-green-400      { color: #57b6a6; }
+  .text-green-500      { color: #57b6a6; }
+  .bg-green-400        { background-color: #57b6a6; }
+  .bg-green-500        { background-color: #57b6a6; }
+
+  /* warning → soft amber (#d8b062) */
+  .text-amber-400      { color: #d8b062; }
+  .text-amber-400\/50  { color: rgba(216,176,98,0.5); }
+  .bg-amber-500\/5     { background-color: rgba(216,176,98,0.05); }
+  .bg-amber-500\/10    { background-color: rgba(216,176,98,0.10); }
+  .border-amber-500\/20{ border-color: rgba(216,176,98,0.20); }
 }
 
 /* ── Scrollbar ────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: rgba(180,130,50,0.04); }
+::-webkit-scrollbar-track { background: rgba(150,170,210,0.04); }
 ::-webkit-scrollbar-thumb {
-  background: rgba(201,165,90,0.35);
+  background: rgba(143,180,255,0.30);
   border-radius: 2px;
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(201,165,90,0.6); }
+::-webkit-scrollbar-thumb:hover { background: rgba(143,180,255,0.55); }
 
-/* ── Mission Grid Background (parchment grain variant) ───────────────── */
+/* ── Mission Grid Background (deep-space grid variant) ───────────────── */
 .mission-grid {
   background-color: var(--void);
   background-image:
-    linear-gradient(rgba(180,130,50,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(180,130,50,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(150,170,210,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(150,170,210,0.045) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: -1px -1px;
   position: relative;
 }
 
-/* Subtle parchment aging vignette */
+/* Subtle cool starlight vignette */
 .mission-grid::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 50% 0%,   rgba(201,165,90,0.04) 0%, transparent 60%),
-    radial-gradient(ellipse at 0% 100%,  rgba(201,165,90,0.03) 0%, transparent 50%),
-    radial-gradient(ellipse at 100% 50%, rgba(201,165,90,0.02) 0%, transparent 50%);
+    radial-gradient(ellipse at 50% 0%,   rgba(143,180,255,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse at 0% 100%,  rgba(120,150,220,0.035) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 50%, rgba(143,180,255,0.025) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* ── Scan Lines → Parchment Aging Lines ──────────────────────────────── */
+/* ── Scan Lines → Faint CRT / atmospheric lines ──────────────────────── */
 .scan-lines::after {
   content: '';
   position: absolute;
@@ -123,24 +163,24 @@ html, body {
     0deg,
     transparent,
     transparent 3px,
-    rgba(0,0,0,0.04) 3px,
-    rgba(0,0,0,0.04) 4px
+    rgba(0,0,0,0.05) 3px,
+    rgba(0,0,0,0.05) 4px
   );
   pointer-events: none;
   z-index: 1;
 }
 
-/* ── Glow Classes (parchment-toned) ──────────────────────────────────── */
-.glow-plasma    { box-shadow: 0 0 20px rgba(201,165,90,0.5); }
-.glow-neon      { box-shadow: 0 0 20px rgba(212,144,96,0.4); }
-.glow-critical  { box-shadow: 0 0 25px rgba(212,32,32,0.7), 0 0 50px rgba(212,32,32,0.3); }
-.glow-high      { box-shadow: 0 0 20px rgba(200,64,32,0.6); }
+/* ── Glow Classes (starlight-toned) ──────────────────────────────────── */
+.glow-plasma    { box-shadow: 0 0 20px rgba(143,180,255,0.5); }
+.glow-neon      { box-shadow: 0 0 20px rgba(169,199,234,0.4); }
+.glow-critical  { box-shadow: 0 0 25px rgba(229,72,77,0.7), 0 0 50px rgba(229,72,77,0.3); }
+.glow-high      { box-shadow: 0 0 20px rgba(217,122,58,0.6); }
 .glow-medium    { box-shadow: 0 0 15px rgba(200,152,40,0.5); }
 .glow-healthy   { box-shadow: 0 0 12px rgba(74,156,90,0.4); }
 
-.text-glow-plasma   { text-shadow: 0 0 15px rgba(201,165,90,0.8); }
-.text-glow-neon     { text-shadow: 0 0 15px rgba(212,144,96,0.8); }
-.text-glow-critical { text-shadow: 0 0 10px rgba(212,32,32,0.9); }
+.text-glow-plasma   { text-shadow: 0 0 15px rgba(143,180,255,0.8); }
+.text-glow-neon     { text-shadow: 0 0 15px rgba(169,199,234,0.8); }
+.text-glow-critical { text-shadow: 0 0 10px rgba(229,72,77,0.9); }
 
 /* ── Animated Gradient Border (golden arcane) ────────────────────────── */
 .gradient-border { position: relative; }
@@ -150,27 +190,27 @@ html, body {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(201,165,90,0.7), rgba(212,144,96,0.4));
+  background: linear-gradient(135deg, rgba(143,180,255,0.7), rgba(169,199,234,0.35));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: destination-out;
   mask-composite: exclude;
   pointer-events: none;
 }
 
-/* ── Panel Glass → Dark Leather Panel ───────────────────────────────── */
+/* ── Panel Glass → Charcoal Glass Panel ─────────────────────────────── */
 .glass-panel {
-  background: rgba(18, 10, 5, 0.88);
+  background: rgba(16, 18, 23, 0.85);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(180, 130, 50, 0.18);
-  /* Subtle inner highlight — aged leather sheen */
-  box-shadow: inset 0 1px 0 rgba(232,213,163,0.04);
+  border: 1px solid rgba(160, 178, 210, 0.12);
+  /* Subtle inner highlight — cool starlight sheen */
+  box-shadow: inset 0 1px 0 rgba(230,233,240,0.05);
 }
 
 .glass-panel-bright {
-  background: rgba(28, 16, 8, 0.92);
+  background: rgba(24, 27, 34, 0.92);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(201, 165, 90, 0.28);
-  box-shadow: inset 0 1px 0 rgba(232,213,163,0.06);
+  border: 1px solid rgba(143, 180, 255, 0.24);
+  box-shadow: inset 0 1px 0 rgba(230,233,240,0.07);
 }
 
 /* ── Ornamental Section Divider ──────────────────────────────────────── */
@@ -179,9 +219,9 @@ html, body {
   height: 1px;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(201,165,90,0.4) 20%,
-    rgba(232,213,163,0.7) 50%,
-    rgba(201,165,90,0.4) 80%,
+    rgba(143,180,255,0.4) 20%,
+    rgba(230,233,240,0.7) 50%,
+    rgba(143,180,255,0.4) 80%,
     transparent 100%
   );
 }
@@ -191,7 +231,7 @@ html, body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(201,165,90,0.6);
+  color: rgba(143,180,255,0.6);
   font-size: 8px;
 }
 .arcane-divider::before { left: 20%; }
@@ -263,7 +303,7 @@ html, body {
   height: 3px;
   border-radius: 2px;
   overflow: hidden;
-  background: rgba(232,213,163,0.06);
+  background: rgba(180,196,224,0.08);
 }
 
 /* ── Code / Mono ─────────────────────────────────────────────────────── */
@@ -271,32 +311,32 @@ html, body {
 
 /* ── Radix Tooltip ───────────────────────────────────────────────────── */
 .TooltipContent {
-  background: rgba(18,10,5,0.96);
-  border: 1px solid rgba(201,165,90,0.35);
-  color: #e8d5a3;
+  background: rgba(16,18,23,0.96);
+  border: 1px solid rgba(143,180,255,0.3);
+  color: #e6e9f0;
   border-radius: 6px;
   padding: 6px 10px;
   font-size: 12px;
 }
 
-/* ── React Flow dark-parchment theme ─────────────────────────────────── */
+/* ── React Flow charcoal theme ───────────────────────────────────────── */
 .react-flow__background { background: transparent !important; }
 .react-flow__controls {
-  background: rgba(18,10,5,0.92) !important;
-  border: 1px solid rgba(180,130,50,0.22) !important;
+  background: rgba(16,18,23,0.92) !important;
+  border: 1px solid rgba(160,178,210,0.16) !important;
 }
 .react-flow__controls-button {
   background: transparent !important;
   border: none !important;
-  color: rgba(232,213,163,0.5) !important;
+  color: rgba(230,233,240,0.5) !important;
 }
 .react-flow__controls-button:hover {
-  background: rgba(201,165,90,0.15) !important;
-  color: #e8d5a3 !important;
+  background: rgba(143,180,255,0.15) !important;
+  color: #e6e9f0 !important;
 }
 .react-flow__minimap {
-  background: rgba(12,7,3,0.92) !important;
-  border: 1px solid rgba(180,130,50,0.22) !important;
+  background: rgba(10,11,14,0.92) !important;
+  border: 1px solid rgba(160,178,210,0.16) !important;
 }
 
 /* ── Scrollable containers ───────────────────────────────────────────── */
@@ -307,33 +347,34 @@ html, body {
 .landing-gradient {
   background: radial-gradient(
     ellipse at 50% 40%,
-    rgba(201,165,90,0.08) 0%,
-    rgba(180,100,40,0.04) 40%,
+    rgba(143,180,255,0.10) 0%,
+    rgba(90,120,200,0.05) 40%,
     transparent 70%
   );
 }
 
 .parchment-badge {
-  border: 1px solid rgba(201,165,90,0.4);
-  background: rgba(201,165,90,0.06);
-  color: #c9a55a;
+  border: 1px solid rgba(143,180,255,0.35);
+  background: rgba(143,180,255,0.06);
+  color: #a9c7ea;
   border-radius: 2px;
-  padding: 2px 8px;
-  font-family: 'Cinzel', Georgia, serif;
+  padding: 3px 10px;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 10px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
 }
 
 .arcane-btn {
   position: relative;
-  border: 1px solid rgba(201,165,90,0.5);
-  background: rgba(201,165,90,0.06);
-  color: #e8d5a3;
-  padding: 12px 40px;
-  font-family: 'Cinzel', Georgia, serif;
+  border: 1px solid rgba(143,180,255,0.45);
+  background: rgba(143,180,255,0.05);
+  color: #e6e9f0;
+  padding: 13px 44px;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 13px;
-  letter-spacing: 0.25em;
+  font-weight: 500;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -343,21 +384,21 @@ html, body {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(201,165,90,0) 0%, rgba(201,165,90,0.08) 100%);
+  background: linear-gradient(135deg, rgba(143,180,255,0) 0%, rgba(143,180,255,0.12) 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 .arcane-btn:hover {
-  border-color: rgba(232,213,163,0.7);
-  color: #f0d888;
-  box-shadow: 0 0 20px rgba(201,165,90,0.25), 0 0 40px rgba(201,165,90,0.1);
+  border-color: rgba(179,204,255,0.8);
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(143,180,255,0.3), 0 0 48px rgba(143,180,255,0.12);
 }
 .arcane-btn:hover::before { opacity: 1; }
 
 .corner-ornament {
   position: absolute;
-  width: 20px; height: 20px;
-  border-color: rgba(201,165,90,0.4);
+  width: 18px; height: 18px;
+  border-color: rgba(143,180,255,0.45);
   border-style: solid;
 }
 .corner-ornament.tl { top:0; left:0;  border-width: 2px 0 0 2px; }

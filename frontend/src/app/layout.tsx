@@ -10,9 +10,9 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 // still resolve correctly.
 
 export const metadata: Metadata = {
-  title: "PS13 — Arcane Mission Control | Predictive MPLS Copilot",
+  title: "VIKRAM — Predictive MPLS Copilot",
   description:
-    "An air-gapped predictive intelligence sanctum for secure MPLS network operations.",
+    "An air-gapped predictive intelligence console for secure MPLS network operations.",
   icons: { icon: "/favicon.ico" },
 };
 

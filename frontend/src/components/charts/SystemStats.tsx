@@ -27,6 +27,7 @@ export default function SystemStats() {
     .sort((a, b) => b.risk_score - a.risk_score)
     .slice(0, 10)
     .map((n) => ({
+      id: n.node_id,
       name: n.node_id.replace(/-\d+$/, "").slice(0, 10),
       risk: n.risk_score,
       bw: n.metrics?.bandwidth_utilization ?? 0,
@@ -48,9 +49,9 @@ export default function SystemStats() {
       {/* KPI row */}
       <div className="grid grid-cols-2 gap-2">
         <KpiCard label="System Risk" value={systemRisk.toFixed(1)} unit="/100" color={riskColor} />
-        <KpiCard label="Active Alerts" value={activeAlerts} color={activeAlerts > 0 ? "#ef4444" : "#22c55e"} />
-        <KpiCard label="Predictions" value={predictions.length} color="#f97316" />
-        <KpiCard label="Critical Nodes" value={criticalCount} color={criticalCount > 0 ? "#ef4444" : "#22c55e"} />
+        <KpiCard label="Active Alerts" value={activeAlerts} color={activeAlerts > 0 ? "#e26370" : "#57b6a6"} />
+        <KpiCard label="Predictions" value={predictions.length} color="#dd8a4a" />
+        <KpiCard label="Critical Nodes" value={criticalCount} color={criticalCount > 0 ? "#e26370" : "#57b6a6"} />
       </div>
 
       {/* Rolling risk line chart */}
@@ -120,12 +121,12 @@ export default function SystemStats() {
             Bandwidth Utilization %
           </div>
           {nodeMetrics.slice(0, 6).map((n) => (
-            <div key={n.name} className="flex items-center gap-2 mb-1.5">
+            <div key={n.id} className="flex items-center gap-2 mb-1.5">
               <span className="text-[9px] font-mono text-white/40 w-20 truncate">{n.name}</span>
               <div className="flex-1 metric-bar">
                 <motion.div
                   className="h-full rounded-full"
-                  style={{ background: n.bw > 70 ? "#f97316" : "#06b6d4" }}
+                  style={{ background: n.bw > 70 ? "#dd8a4a" : "#8fb4ff" }}
                   animate={{ width: `${Math.min(n.bw, 100)}%` }}
                   transition={{ duration: 0.8 }}
                 />

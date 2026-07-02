@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWebSocket } from "@/hooks/useWebSocket";
+import { useSimulation } from "@/hooks/useSimulation";
 import { usePS13Store } from "@/store";
 import { getTopology } from "@/lib/api";
 import MissionHeader from "@/components/layout/MissionHeader";
@@ -31,7 +32,11 @@ const queryClient = new QueryClient({
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 function MissionControl() {
   const { connected } = useWebSocket();
-  const { activePanel, setTopology } = usePS13Store();
+  useSimulation(); // client-side sim (seeds topology + drives risk if no backend)
+  const {
+    activePanel, setTopology, panelOpen,
+    setSidebarOpen, setPanelOpen,
+  } = usePS13Store();
 
   useEffect(() => {
     getTopology()
@@ -40,6 +45,22 @@ function MissionControl() {
       })
       .catch(console.error);
   }, [setTopology]);
+
+  // ⌘/Ctrl + [ collapses the left nav, + ] collapses the right panel.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey)) return;
+      if (e.key === "[") {
+        e.preventDefault();
+        setSidebarOpen(!usePS13Store.getState().sidebarOpen);
+      } else if (e.key === "]") {
+        e.preventDefault();
+        setPanelOpen(!usePS13Store.getState().panelOpen);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [setSidebarOpen, setPanelOpen]);
 
   return (
     <div className="flex flex-col h-screen bg-void overflow-hidden mission-grid scan-lines">
@@ -56,16 +77,18 @@ function MissionControl() {
 
         <motion.aside
           key={activePanel}
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-          className="w-[420px] h-full overflow-hidden glass-panel border-l border-plasma/20 flex-shrink-0"
+          initial={{ opacity: 0, x: 90, width: panelOpen ? 420 : 0 }}
+          animate={{ opacity: 1, x: 0, width: panelOpen ? 420 : 0 }}
+          transition={{ type: "spring", stiffness: 150, damping: 16, mass: 0.9 }}
+          className="h-full overflow-hidden glass-panel border-l border-plasma/20 flex-shrink-0"
         >
-          {activePanel === "copilot"    && <CopilotPanel />}
-          {activePanel === "blast"      && <BlastRadiusPanel />}
-          {activePanel === "simulation" && <SimulationPanel />}
-          {activePanel === "scenarios"  && <ScenarioPanel />}
-          {activePanel === "network"    && <SystemStats />}
+          <div className="w-[420px] h-full overflow-hidden">
+            {activePanel === "copilot"    && <CopilotPanel />}
+            {activePanel === "blast"      && <BlastRadiusPanel />}
+            {activePanel === "simulation" && <SimulationPanel />}
+            {activePanel === "scenarios"  && <ScenarioPanel />}
+            {activePanel === "network"    && <SystemStats />}
+          </div>
         </motion.aside>
       </div>
     </div>
@@ -74,7 +97,8 @@ function MissionControl() {
 
 // ── Root (landing gate + dashboard) ──────────────────────────────────────────
 function AppRoot() {
-  const [showLanding, setShowLanding] = useState(true);
+  const showLanding = usePS13Store((s) => s.showLanding);
+  const setShowLanding = usePS13Store((s) => s.setShowLanding);
 
   return (
     <>

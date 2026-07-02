@@ -71,7 +71,7 @@ const NetworkEdge = memo(({
         <path
           d={edgePath}
           fill="none"
-          stroke="#ef4444"
+          stroke="#e26370"
           strokeWidth={1}
           strokeDasharray="2 18"
           opacity={0.5}

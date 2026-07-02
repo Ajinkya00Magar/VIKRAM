@@ -3,18 +3,19 @@
 import { useRef, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import EmberField from "./EmberField";
-import ArcaneSigil from "./ArcaneSigil";
+import Starfield from "./Starfield";
+import ShootingStars from "./ShootingStars";
+import BinaryStars from "./BinaryStars";
 
 // ── Mouse-driven parallax camera ─────────────────────────────────────────────
 function ParallaxCamera() {
   const { camera } = useThree();
-  const mouse  = useRef({ x: 0, y: 0 });
+  const mouse = useRef({ x: 0, y: 0 });
   const target = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
-      mouse.current.x =  (e.clientX / window.innerWidth  - 0.5) * 2;
+      mouse.current.x = (e.clientX / window.innerWidth - 0.5) * 2;
       mouse.current.y = -(e.clientY / window.innerHeight - 0.5) * 2;
     };
     window.addEventListener("mousemove", onMove);
@@ -22,9 +23,9 @@ function ParallaxCamera() {
   }, []);
 
   useFrame(() => {
-    // Lag behind mouse for a silky parallax feel
-    target.current.x += (mouse.current.x * 0.06 - target.current.x) * 0.04;
-    target.current.y += (mouse.current.y * 0.04 - target.current.y) * 0.04;
+    // Lag behind the pointer for a silky parallax drift.
+    target.current.x += (mouse.current.x * 0.05 - target.current.x) * 0.04;
+    target.current.y += (mouse.current.y * 0.035 - target.current.y) * 0.04;
     camera.rotation.y = target.current.x;
     camera.rotation.x = target.current.y;
   });
@@ -32,22 +33,36 @@ function ParallaxCamera() {
   return null;
 }
 
-// ── Ambient foggy golden mist ─────────────────────────────────────────────────
-function AmbientMist() {
-  const meshRef = useRef<THREE.Mesh>(null);
+// ── Slow-breathing nebula clouds (far background gradient planes) ─────────────
+function Nebula() {
+  const a = useRef<THREE.Mesh>(null);
+  const b = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock }) => {
-    if (!meshRef.current) return;
     const t = clock.elapsedTime;
-    const mat = meshRef.current.material as THREE.MeshBasicMaterial;
-    mat.opacity = 0.025 + 0.01 * Math.sin(t * 0.3);
+    if (a.current) {
+      (a.current.material as THREE.MeshBasicMaterial).opacity =
+        0.06 + 0.025 * Math.sin(t * 0.18);
+      a.current.rotation.z = t * 0.008;
+    }
+    if (b.current) {
+      (b.current.material as THREE.MeshBasicMaterial).opacity =
+        0.05 + 0.02 * Math.sin(t * 0.13 + 1.5);
+      b.current.rotation.z = -t * 0.006;
+    }
   });
 
   return (
-    <mesh ref={meshRef} position={[0, 0, -15]}>
-      <planeGeometry args={[60, 40]} />
-      <meshBasicMaterial color="#c9a55a" transparent opacity={0.03} />
-    </mesh>
+    <>
+      <mesh ref={a} position={[-8, 5, -30]}>
+        <planeGeometry args={[46, 46]} />
+        <meshBasicMaterial color="#3a5aa0" transparent opacity={0.06} depthWrite={false} />
+      </mesh>
+      <mesh ref={b} position={[10, -6, -34]}>
+        <planeGeometry args={[52, 52]} />
+        <meshBasicMaterial color="#5f4a8a" transparent opacity={0.05} depthWrite={false} />
+      </mesh>
+    </>
   );
 }
 
@@ -55,62 +70,25 @@ function AmbientMist() {
 export default function Scene3D() {
   return (
     <Canvas
-      camera={{ position: [0, 0, 8], fov: 60, near: 0.1, far: 200 }}
+      camera={{ position: [0, 0, 8], fov: 62, near: 0.1, far: 200 }}
       style={{ position: "absolute", inset: 0 }}
       gl={{ antialias: true, alpha: true }}
     >
-      {/* Atmosphere fog — warm amber */}
-      <fog attach="fog" args={["#0a0600", 18, 60]} />
+      {/* Deep-space atmosphere fog — cool charcoal */}
+      <fog attach="fog" args={["#0a0b0e", 26, 90]} />
 
       <ParallaxCamera />
-      <AmbientMist />
+      <Nebula />
 
-      {/* ── Deep background stars (very slow, tiny) ── */}
-      <EmberField
-        count={200}
-        zDepth={-40}
-        color="#6b4c1a"
-        opacity={0.4}
-        sizeRange={[0.02, 0.06]}
-        speedRange={[0.002, 0.007]}
-        spread={[50, 35]}
-      />
+      {/* Layered starfields for a sense of depth */}
+      <Starfield count={520} radius={58} size={0.11} drift={0.006} opacity={0.55} />
+      <Starfield count={340} radius={42} size={0.17} drift={0.011} opacity={0.8} />
+      <Starfield count={140} radius={26} size={0.26} drift={0.018} opacity={0.95} />
 
-      {/* ── Mid-ground embers ── */}
-      <EmberField
-        count={120}
-        zDepth={-18}
-        color="#a07838"
-        opacity={0.5}
-        sizeRange={[0.04, 0.1]}
-        speedRange={[0.006, 0.018]}
-        spread={[30, 22]}
-      />
-
-      {/* ── Foreground bright ember sparks ── */}
-      <EmberField
-        count={60}
-        zDepth={-5}
-        color="#e8c87a"
-        opacity={0.65}
-        sizeRange={[0.05, 0.14]}
-        speedRange={[0.012, 0.028]}
-        spread={[18, 12]}
-      />
-
-      {/* ── Very close micro-sparks ── */}
-      <EmberField
-        count={30}
-        zDepth={2}
-        color="#f0d888"
-        opacity={0.45}
-        sizeRange={[0.03, 0.08]}
-        speedRange={[0.018, 0.04]}
-        spread={[12, 8]}
-      />
-
-      {/* ── Central arcane sigil ── */}
-      <ArcaneSigil />
+      {/* Living background elements — meteors + a distant binary system */}
+      <ShootingStars count={5} />
+      <BinaryStars position={[-9.5, 4.2, -24]} scale={1} />
+      <BinaryStars position={[11, -5.5, -30]} scale={0.7} />
     </Canvas>
   );
 }
