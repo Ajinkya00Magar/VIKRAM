@@ -12,7 +12,7 @@ all: up
 
 ## Start full stack
 up:
-	@echo "🚀 Starting PS13 Mission Control..."
+	@echo "🚀 Starting VIKRAM..."
 	$(DC) up -d --build
 	@echo "✅ Access at http://localhost:3000"
 
@@ -145,7 +145,7 @@ docs:
 
 help:
 	@echo ""
-	@echo "PS13 — Mission Control Makefile"
+	@echo "VIKRAM Makefile"
 	@echo "================================"
 	@echo "  make setup          First-time setup"
 	@echo "  make up             Start all services"

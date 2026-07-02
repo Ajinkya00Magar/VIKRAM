@@ -15,11 +15,23 @@ const NAV_ITEMS = [
   { id: "scenarios", label: "Scenarios",     icon: AlertTriangle, hotkey: "X" },
 ] as const;
 
+// ── "Pulled into place by a force" spring ───────────────────────────────────
+const PULL_SPRING = { type: "spring", stiffness: 140, damping: 15, mass: 0.9 } as const;
+
+const navContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06, delayChildren: 0.12 } },
+};
+const navItem = {
+  hidden: { opacity: 0, x: -24 },
+  show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 260, damping: 20 } },
+};
+
 export default function Sidebar() {
   const {
     activePanel, setActivePanel,
     nodes, predictions, alerts,
-    criticalNodes,
+    criticalNodes, sidebarOpen,
   } = usePS13Store();
 
   const unacknowledged = alerts.filter((a) => !a.acknowledged).length;
@@ -30,18 +42,30 @@ export default function Sidebar() {
     .slice(0, 8);
 
   return (
-    <aside className="w-64 h-full flex flex-col glass-panel border-r border-plasma/20 flex-shrink-0 overflow-hidden">
+    <motion.aside
+      initial={{ x: -90, opacity: 0, width: 256 }}
+      animate={{ x: 0, opacity: 1, width: sidebarOpen ? 256 : 0 }}
+      transition={PULL_SPRING}
+      className="h-full glass-panel border-r border-plasma/20 flex-shrink-0 overflow-hidden"
+    >
+     <div className="w-64 h-full flex flex-col">
 
       {/* ── Navigation ── */}
-      <nav className="p-2 border-b border-white/5">
+      <motion.nav
+        className="p-2 border-b border-white/5"
+        variants={navContainer}
+        initial="hidden"
+        animate="show"
+      >
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive = activePanel === item.id;
           return (
             <motion.button
               key={item.id}
+              variants={navItem}
               onClick={() => setActivePanel(item.id)}
-              whileHover={{ x: 2 }}
+              whileHover={{ x: 4 }}
               whileTap={{ scale: 0.97 }}
               className={`
                 w-full flex items-center gap-3 px-3 py-2.5 rounded-md mb-0.5
@@ -65,7 +89,7 @@ export default function Sidebar() {
             </motion.button>
           );
         })}
-      </nav>
+      </motion.nav>
 
       {/* ── High Risk Nodes ── */}
       <div className="flex-1 overflow-y-auto p-3">
@@ -157,6 +181,7 @@ export default function Sidebar() {
           </span>
         </div>
       </div>
-    </aside>
+     </div>
+    </motion.aside>
   );
 }

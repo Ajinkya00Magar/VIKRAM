@@ -1,12 +1,11 @@
-# VIKRAM
-Air-Gapped Predictive Copilot for Secure MPLS Operations
+# 🛰️ PS13 — Air-Gapped Predictive Copilot & Mission Control Dashboard.
 
 [![Stack](https://img.shields.io/badge/Stack-Next.js%2015%20%7C%20FastAPI%20%7C%20Docker-blue.svg?style=for-the-badge&logo=nextdotjs)]()
 [![AI Engine](https://img.shields.io/badge/AI%20Engine-Ollama%20%7C%20Mistral%207B-orange.svg?style=for-the-badge&logo=ollama)]()
 [![Databases](https://img.shields.io/badge/Databases-Postgres%20%7C%20Influx%20%7C%20Chroma-green.svg?style=for-the-badge&logo=postgresql)]()
 [![Security](https://img.shields.io/badge/Security-100%25%20Air--Gapped%20%7C%20Offline-success.svg?style=for-the-badge&logo=shield)]()
 
-An offline, **AI-powered Network Operations Center (NOC) Mission Control** built for secure, enterprise-grade MPLS & SD-WAN networks. It predicts failures before service impact, explains risk propagation, simulates corrective actions, and answers complex operator questions—running **100% locally** in an air-gapped environment.
+An offline, AI-powered Network Operations Center (NOC) console — **VIKRAM** — built for secure, enterprise-grade MPLS & SD-WAN networks. It predicts failures before service impact, explains risk propagation, simulates corrective actions, and answers complex operator questions—running **100% locally** in an air-gapped environment.
 
 ---
 
@@ -48,7 +47,7 @@ graph TD
 
     subgraph DECISION ORCHESTRATION
         F & E & G & H & I & L1 --> M[WebSocket Manager]
-        M -->|Real-Time Broadcast| N[NOC Mission Control Dashboard]
+        M -->|Real-Time Broadcast| N[VIKRAM Console]
     end
 
     style A fill:#1e1e2e,stroke:#313244,stroke-width:2px,color:#cdd6f4
@@ -296,4 +295,4 @@ ps13-copilot/
 
 ---
 
-*PS13 Mission Control — Secure. Local. Autonomous. Predictive.*.
+*VIKRAM — Secure. Local. Autonomous. Predictive.*.

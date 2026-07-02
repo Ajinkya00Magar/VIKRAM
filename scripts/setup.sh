@@ -16,8 +16,8 @@ NC='\033[0m'
 
 BANNER="
 ╔══════════════════════════════════════════════════════════╗
-║         PS13 — AIR-GAPPED PREDICTIVE COPILOT            ║
-║         SECURE MPLS OPERATIONS MISSION CONTROL          ║
+║          VIKRAM — AIR-GAPPED PREDICTIVE COPILOT          ║
+║              SECURE MPLS OPERATIONS CONSOLE              ║
 ╚══════════════════════════════════════════════════════════╝"
 
 echo -e "${CYAN}${BANNER}${NC}"
@@ -125,9 +125,9 @@ echo ""
 
 echo -e "${GREEN}${BOLD}"
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║                   PS13 IS OPERATIONAL                   ║"
+echo "║                  VIKRAM IS OPERATIONAL                   ║"
 echo "╠══════════════════════════════════════════════════════════╣"
-echo "║  Mission Control UI  →  http://localhost:3000            ║"
+echo "║  VIKRAM Console  →  http://localhost:3000                ║"
 echo "║  Backend API Docs    →  http://localhost:8000/docs       ║"
 echo "║  InfluxDB UI         →  http://localhost:8086            ║"
 echo "║  Prometheus          →  http://localhost:9090            ║"

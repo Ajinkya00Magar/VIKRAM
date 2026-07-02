@@ -125,7 +125,7 @@ export default function NodeDetailPanel() {
           <div className="p-3 space-y-2">
             {METRICS.map(({ label, key, unit, warn, crit }) => {
               const val = m[key as keyof typeof m] as number ?? 0;
-              const metricColor = val >= crit ? "#ef4444" : val >= warn ? "#f97316" : "#22c55e";
+              const metricColor = val >= crit ? "#e26370" : val >= warn ? "#dd8a4a" : "#57b6a6";
               const pct = Math.min(val / crit * 100, 100);
               return (
                 <div key={key}>
@@ -181,7 +181,7 @@ export default function NodeDetailPanel() {
               <div className="text-center text-[10px] text-white/30 py-4 font-mono">Loading...</div>
             ) : actions.length > 0 ? (
               actions.slice(0, 5).map((action: any) => {
-                const ac = action.operational_cost === "LOW" ? "#22c55e" : action.operational_cost === "MEDIUM" ? "#eab308" : "#ef4444";
+                const ac = action.operational_cost === "LOW" ? "#57b6a6" : action.operational_cost === "MEDIUM" ? "#d8b062" : "#e26370";
                 return (
                   <div key={action.rank} className="rounded-md p-2 border border-white/5 bg-white/2">
                     <div className="flex justify-between items-start mb-1">
@@ -209,7 +209,7 @@ export default function NodeDetailPanel() {
           whileTap={{ scale: 0.95 }}
           onClick={analyzeBlast}
           className="flex-1 py-1.5 rounded-md text-[10px] font-mono flex items-center justify-center gap-1"
-          style={{ background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.25)", color: "#f97316" }}
+          style={{ background: "rgba(221,138,74,0.1)", border: "1px solid rgba(221,138,74,0.25)", color: "#dd8a4a" }}
         >
           <Zap size={9} /> Blast Radius
         </motion.button>

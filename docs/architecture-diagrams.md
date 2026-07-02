@@ -52,7 +52,7 @@ flowchart TD
         ORCH[Background\nOrchestrator]
     end
 
-    subgraph FRONTEND["🖥️ Mission Control UI"]
+    subgraph FRONTEND["🖥️ VIKRAM Console"]
         CANVAS[Network Canvas\nReact Flow]
         RISKUI[Risk Overlay\nFramer Motion]
         COPILOTUI[Copilot Panel\nSSE Stream]

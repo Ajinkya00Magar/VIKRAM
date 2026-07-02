@@ -22,6 +22,10 @@ export function useWebSocket() {
       const { event_type, payload } = msg;
       const state = usePS13Store.getState();
 
+      // When the client simulation owns risk/intrusions, ignore the backend's
+      // live risk/prediction/alert/scenario streams (topology is still used).
+      const simOwnsRisk = state.simMode;
+
       switch (event_type) {
         case "topology_init": {
           state.setTopology(payload.nodes || [], payload.links || []);
@@ -29,6 +33,7 @@ export function useWebSocket() {
         }
 
         case "risk_update": {
+          if (simOwnsRisk) break;
           state.setSystemRisk(
             payload.overall_risk ?? 0,
             payload.highest_risk_node ?? "",
@@ -56,6 +61,7 @@ export function useWebSocket() {
         }
 
         case "prediction": {
+          if (simOwnsRisk) break;
           state.addPrediction({
             prediction_id: payload.prediction_id,
             node_id: payload.node_id,
@@ -71,6 +77,7 @@ export function useWebSocket() {
         }
 
         case "alert": {
+          if (simOwnsRisk) break;
           state.addAlert({
             id: `alert-${Date.now()}`,
             node_id: payload.node_id,
