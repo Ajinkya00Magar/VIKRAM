@@ -157,10 +157,10 @@ services:
       - ps13-net
 
     environment:
-      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN}
-      INFLUXDB_ORG: ${INFLUXDB_ORG}
-      INFLUXDB_BUCKET: ${INFLUXDB_BUCKET}
-      SNMP_COMMUNITY: ${SNMP_COMMUNITY}
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN:-ps13-influx-token-dev}
+      INFLUXDB_ORG: ${INFLUXDB_ORG:-ps13}
+      INFLUXDB_BUCKET: ${INFLUXDB_BUCKET:-network_telemetry}
+      SNMP_COMMUNITY: ${SNMP_COMMUNITY:-public}
 
     volumes:
       - ./infra/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro

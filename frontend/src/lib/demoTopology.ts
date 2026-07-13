@@ -35,18 +35,18 @@ interface Seed {
 }
 
 const SEEDS: Seed[] = [
-  { id: "HUB-RTR-01",  label: "Hub Router 01",     type: "ROUTER",     site: "HQ",      ip: "10.0.0.1",  x: 500, y: 300, critical: true,  services: ["voip", "erp", "internet"] },
-  { id: "MPLS-PE-01",  label: "MPLS PE Router 01", type: "PE",         site: "DC1",     ip: "10.0.1.1",  x: 300, y: 150, critical: true,  services: ["mpls-core"], over: { mpls_label_count: 4200 } },
-  { id: "MPLS-PE-02",  label: "MPLS PE Router 02", type: "PE",         site: "DC2",     ip: "10.0.1.2",  x: 700, y: 150, critical: true,  services: ["mpls-core"], over: { mpls_label_count: 3900 } },
-  { id: "SDWAN-CTRL",  label: "SD-WAN Controller", type: "SDWAN_CTRL", site: "HQ",      ip: "10.0.0.10", x: 500, y: 100, critical: true,  services: ["sdwan-mgmt"] },
-  { id: "SPOKE-RTR-A", label: "Spoke Router A",    type: "ROUTER",     site: "SITE-A",  ip: "10.1.0.1",  x: 150, y: 450, critical: false, services: ["voip", "erp"],     over: { tunnel_uptime: 99.9 } },
-  { id: "SPOKE-RTR-B", label: "Spoke Router B",    type: "ROUTER",     site: "SITE-B",  ip: "10.2.0.1",  x: 350, y: 500, critical: false, services: ["erp", "internet"], over: { tunnel_uptime: 99.8 } },
-  { id: "SPOKE-RTR-C", label: "Spoke Router C",    type: "ROUTER",     site: "SITE-C",  ip: "10.3.0.1",  x: 650, y: 500, critical: false, services: ["voip", "video"],   over: { tunnel_uptime: 99.7 } },
-  { id: "SPOKE-RTR-D", label: "Spoke Router D",    type: "ROUTER",     site: "SITE-D",  ip: "10.4.0.1",  x: 850, y: 450, critical: false, services: ["internet"],        over: { tunnel_uptime: 99.9 } },
-  { id: "BGP-PEER-01", label: "BGP Internet Peer", type: "ROUTER",     site: "TRANSIT", ip: "203.0.1.1", x: 500, y: 30,  critical: true,  services: ["internet"],        over: { bgp_prefixes: 850000 } },
-  { id: "SVC-VOIP",    label: "VoIP Service",      type: "SERVICE",    site: "HQ",      ip: "10.0.5.1",  x: 350, y: 350, critical: true,  services: ["voip"] },
-  { id: "SVC-ERP",     label: "ERP Service",       type: "SERVICE",    site: "HQ",      ip: "10.0.5.2",  x: 500, y: 380, critical: true,  services: ["erp"] },
-  { id: "SVC-VIDEO",   label: "Video Service",     type: "SERVICE",    site: "HQ",      ip: "10.0.5.3",  x: 650, y: 350, critical: false, services: ["video"] },
+  { id: "HUB-RTR-01",  label: "Hub Router 01",     type: "ROUTER",     site: "HQ",      ip: "10.0.0.1",  x: 600, y: 450, critical: true,  services: ["voip", "erp", "internet"] },
+  { id: "MPLS-PE-01",  label: "MPLS PE Router 01", type: "PE",         site: "DC1",     ip: "10.0.1.1",  x: 200, y: 250, critical: true,  services: ["mpls-core"], over: { mpls_label_count: 4200 } },
+  { id: "MPLS-PE-02",  label: "MPLS PE Router 02", type: "PE",         site: "DC2",     ip: "10.0.1.2",  x: 1000, y: 250, critical: true,  services: ["mpls-core"], over: { mpls_label_count: 3900 } },
+  { id: "SDWAN-CTRL",  label: "SD-WAN Controller", type: "SDWAN_CTRL", site: "HQ",      ip: "10.0.0.10", x: 600, y: 150, critical: true,  services: ["sdwan-mgmt"] },
+  { id: "SPOKE-RTR-A", label: "Spoke Router A",    type: "ROUTER",     site: "SITE-A",  ip: "10.1.0.1",  x: 100, y: 700, critical: false, services: ["voip", "erp"],     over: { tunnel_uptime: 99.9 } },
+  { id: "SPOKE-RTR-B", label: "Spoke Router B",    type: "ROUTER",     site: "SITE-B",  ip: "10.2.0.1",  x: 400, y: 800, critical: false, services: ["erp", "internet"], over: { tunnel_uptime: 99.8 } },
+  { id: "SPOKE-RTR-C", label: "Spoke Router C",    type: "ROUTER",     site: "SITE-C",  ip: "10.3.0.1",  x: 800, y: 800, critical: false, services: ["voip", "video"],   over: { tunnel_uptime: 99.7 } },
+  { id: "SPOKE-RTR-D", label: "Spoke Router D",    type: "ROUTER",     site: "SITE-D",  ip: "10.4.0.1",  x: 1100, y: 700, critical: false, services: ["internet"],        over: { tunnel_uptime: 99.9 } },
+  { id: "BGP-PEER-01", label: "BGP Internet Peer", type: "ROUTER",     site: "TRANSIT", ip: "203.0.1.1", x: 200, y: 50,  critical: true,  services: ["internet"],        over: { bgp_prefixes: 850000 } },
+  { id: "SVC-VOIP",    label: "VoIP Service",      type: "SERVICE",    site: "HQ",      ip: "10.0.5.1",  x: 250, y: 450, critical: true,  services: ["voip"] },
+  { id: "SVC-ERP",     label: "ERP Service",       type: "SERVICE",    site: "HQ",      ip: "10.0.5.2",  x: 600, y: 650, critical: true,  services: ["erp"] },
+  { id: "SVC-VIDEO",   label: "Video Service",     type: "SERVICE",    site: "HQ",      ip: "10.0.5.3",  x: 950, y: 450, critical: false, services: ["video"] },
 ];
 
 interface LinkSeed {

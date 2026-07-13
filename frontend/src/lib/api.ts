@@ -37,7 +37,7 @@ export const getNodePrediction = (id: string) =>
 // ── Blast Radius ──────────────────────────────────────
 
 export const getBlastRadius = (nodeId: string, failureType = "MPLS_FAILURE") =>
-  api.get(`/api/blast-radius/${nodeId}`, { params: { failure_type: failureType } }).then((r) => r.data);
+  api.get(`/api/blast-radius/${nodeId}`, { params: { failure_type: failureType.toLowerCase() } }).then((r) => r.data);
 export const getAllBlastRadii = () => api.get("/api/blast-radius").then((r) => r.data);
 
 // ── Simulation ────────────────────────────────────────
@@ -45,7 +45,7 @@ export const getAllBlastRadii = () => api.get("/api/blast-radius").then((r) => r
 export const runSimulation = (nodeId: string, failureType: string, currentRisk = 75) =>
   api
     .post("/api/simulation", null, {
-      params: { node_id: nodeId, failure_type: failureType, current_risk: currentRisk },
+      params: { node_id: nodeId, failure_type: failureType.toLowerCase(), current_risk: currentRisk },
     })
     .then((r) => r.data);
 
@@ -54,7 +54,7 @@ export const simulateAction = (
 ) =>
   api
     .post("/api/simulation/action", null, {
-      params: { node_id: nodeId, failure_type: failureType, action_type: actionType, current_risk: currentRisk },
+      params: { node_id: nodeId, failure_type: failureType.toLowerCase(), action_type: actionType.toLowerCase(), current_risk: currentRisk },
     })
     .then((r) => r.data);
 

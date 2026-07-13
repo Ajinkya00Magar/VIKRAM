@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { BaseEdge, EdgeLabelRenderer, getBezierPath, type EdgeProps } from "@xyflow/react";
+import { BaseEdge, EdgeLabelRenderer, getStraightPath, type EdgeProps } from "@xyflow/react";
 
 interface NetworkEdgeData {
   link: {
@@ -18,12 +18,12 @@ interface NetworkEdgeData {
 
 const NetworkEdge = memo(({
   id, sourceX, sourceY, targetX, targetY,
-  sourcePosition, targetPosition, data, style,
+  data, style,
 }: EdgeProps) => {
   const { link, color } = data as unknown as NetworkEdgeData;
-  const [edgePath, labelX, labelY] = getBezierPath({
-    sourceX, sourceY, sourcePosition,
-    targetX, targetY, targetPosition,
+  const [edgePath, labelX, labelY] = getStraightPath({
+    sourceX, sourceY,
+    targetX, targetY,
   });
 
   const isDegraded  = link.status === "DEGRADED" || link.packet_loss > 2;

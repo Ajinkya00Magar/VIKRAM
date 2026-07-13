@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import {
   ReactFlow, Background, Controls, MiniMap,
   useNodesState, useEdgesState, BackgroundVariant,
@@ -8,7 +8,6 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { motion } from "framer-motion";
-import * as d3 from "d3";
 import { usePS13Store, getRiskColor } from "@/store";
 import NetworkNode from "./NetworkNode";
 import NetworkEdge from "./NetworkEdge";
@@ -16,121 +15,43 @@ import NetworkEdge from "./NetworkEdge";
 const nodeTypes = { networkNode: NetworkNode };
 const edgeTypes = { networkEdge: NetworkEdge };
 
-// d3 simulation node (mutated in place by the force sim)
-interface SimNode {
-  id: string;
-  x: number;
-  y: number;
-  vx?: number;
-  vy?: number;
-  fx?: number | null;
-  fy?: number | null;
-}
-
 export default function NetworkCanvas() {
   const { nodes: storeNodes, links: storeLinks, selectedNode, setSelectedNode } = usePS13Store();
   const [rfNodes, setRfNodes, onNodesChange] = useNodesState<Node>([]);
   const [rfEdges, setRfEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
-  const simRef = useRef<d3.Simulation<SimNode, undefined> | null>(null);
-  const simNodesRef = useRef<Map<string, SimNode>>(new Map());
-  const draggingRef = useRef<string | null>(null);
-
-  // Rebuild the simulation only when the SET of nodes/links changes
-  // (not on every risk tick), so physics positions are preserved.
-  const nodeIdKey = useMemo(
-    () => storeNodes.map((n) => n.node_id).sort().join(","),
-    [storeNodes]
-  );
-  const linkIdKey = useMemo(
-    () => storeLinks.map((l) => l.link_id).sort().join(","),
-    [storeLinks]
-  );
-
+  // 1. Init & update Nodes (Preserve dragged positions)
   useEffect(() => {
     if (!storeNodes.length) return;
 
-    const prev = simNodesRef.current;
-    // Preserve existing positions; seed new nodes from their layout coords.
-    const simNodes: SimNode[] = storeNodes.map((n, i) => {
-      const ex = prev.get(n.node_id);
-      if (ex) return ex;
-      const spread = (v: number, c: number) => (v - c) * 0.9 + (i % 2 ? 12 : -12);
-      return { id: n.node_id, x: spread(n.position_x, 500), y: spread(n.position_y, 300) };
-    });
-    const map = new Map(simNodes.map((sn) => [sn.id, sn]));
-    simNodesRef.current = map;
+    setRfNodes((currentNodes) => {
+      const existingMap = new Map(currentNodes.map((n) => [n.id, n]));
 
-    const simLinks = storeLinks
-      .filter((l) => map.has(l.source) && map.has(l.target))
-      .map((l) => ({ source: l.source, target: l.target }));
+      return storeNodes.map((sn) => {
+        const existing = existingMap.get(sn.node_id);
+        const isSelected = selectedNode?.node_id === sn.node_id;
+        
+        if (existing) {
+          // Keep existing position, only update data
+          return {
+            ...existing,
+            data: { ...existing.data, node: sn, selected: isSelected },
+          };
+        }
 
-    const sim = d3
-      .forceSimulation<SimNode>(simNodes)
-      .force("charge", d3.forceManyBody<SimNode>().strength(-540))
-      .force(
-        "link",
-        d3
-          .forceLink<SimNode, { source: string; target: string }>(simLinks)
-          .id((d) => d.id)
-          .distance(135)
-          .strength(0.32)
-      )
-      .force("collide", d3.forceCollide<SimNode>(60))
-      .force("x", d3.forceX<SimNode>(0).strength(0.045))
-      .force("y", d3.forceY<SimNode>(0).strength(0.05))
-      .velocityDecay(0.42)
-      .alphaTarget(0.02) // never fully settle → gentle perpetual motion
-      .alphaDecay(0.02);
-
-    sim.on("tick", () => {
-      setRfNodes((nds) =>
-        nds.map((rn) => {
-          if (draggingRef.current === rn.id) return rn;
-          const sn = map.get(rn.id);
-          if (!sn) return rn;
-          return { ...rn, position: { x: sn.x, y: sn.y } };
-        })
-      );
-    });
-
-    simRef.current = sim;
-
-    // Seed React Flow nodes at their current sim positions.
-    setRfNodes(
-      storeNodes.map((n) => {
-        const sn = map.get(n.node_id)!;
+        // New node, use initial structured positions
         return {
-          id: n.node_id,
+          id: sn.node_id,
           type: "networkNode",
-          position: { x: sn.x, y: sn.y },
-          data: { node: n, selected: selectedNode?.node_id === n.node_id },
+          position: { x: sn.position_x, y: sn.position_y },
+          data: { node: sn, selected: isSelected },
           draggable: true,
         };
-      })
-    );
-
-    return () => {
-      sim.stop();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodeIdKey, linkIdKey, setRfNodes]);
-
-  // Update node DATA (risk/metrics) without disturbing physics positions.
-  useEffect(() => {
-    setRfNodes((nds) =>
-      nds.map((rn) => {
-        const sn = storeNodes.find((s) => s.node_id === rn.id);
-        if (!sn) return rn;
-        return {
-          ...rn,
-          data: { ...rn.data, node: sn, selected: selectedNode?.node_id === rn.id },
-        };
-      })
-    );
+      });
+    });
   }, [storeNodes, selectedNode, setRfNodes]);
 
-  // Build edges from links.
+  // 2. Build Edges
   useEffect(() => {
     if (!storeLinks.length) return;
     const flowEdges: Edge[] = storeLinks.map((l) => {
@@ -155,26 +76,7 @@ export default function NetworkCanvas() {
     setRfEdges(flowEdges);
   }, [storeLinks, setRfEdges]);
 
-  // ── Drag: pin node to the pointer, reheat sim, release on drop ───────────
-  const onNodeDragStart = useCallback((_e: MouseEvent | TouchEvent, node: Node) => {
-    draggingRef.current = node.id;
-    const sn = simNodesRef.current.get(node.id);
-    if (sn) { sn.fx = node.position.x; sn.fy = node.position.y; }
-    simRef.current?.alphaTarget(0.35).restart();
-  }, []);
-
-  const onNodeDrag = useCallback((_e: MouseEvent | TouchEvent, node: Node) => {
-    const sn = simNodesRef.current.get(node.id);
-    if (sn) { sn.fx = node.position.x; sn.fy = node.position.y; }
-  }, []);
-
-  const onNodeDragStop = useCallback((_e: MouseEvent | TouchEvent, node: Node) => {
-    draggingRef.current = null;
-    const sn = simNodesRef.current.get(node.id);
-    if (sn) { sn.fx = null; sn.fy = null; } // rejoin the physics
-    simRef.current?.alphaTarget(0.02);
-  }, []);
-
+  // 3. Selection handling
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
       const storeNode = storeNodes.find((n) => n.node_id === node.id);
@@ -193,9 +95,6 @@ export default function NetworkCanvas() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
-        onNodeDragStart={onNodeDragStart}
-        onNodeDrag={onNodeDrag}
-        onNodeDragStop={onNodeDragStop}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
